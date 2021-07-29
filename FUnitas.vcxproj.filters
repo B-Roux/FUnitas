@@ -20,20 +20,23 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FList\FBlock.h">
+    <ClInclude Include="FUnitas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FList\FList.h">
+    <ClInclude Include="FUnitas\FBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FList\FMacros.h">
+    <ClInclude Include="FUnitas\FList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FList\FRange.h">
+    <ClInclude Include="FUnitas\FMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FUnitas\FRange.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FList\README.md" />
+    <None Include="FUnitas\README.md" />
   </ItemGroup>
 </Project>

@@ -142,13 +142,14 @@
     <ClCompile Include="FUnitas.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FList\FBlock.h" />
-    <ClInclude Include="FList\FList.h" />
-    <ClInclude Include="FList\FMacros.h" />
-    <ClInclude Include="FList\FRange.h" />
+    <ClInclude Include="FUnitas.h" />
+    <ClInclude Include="FUnitas\FBlock.h" />
+    <ClInclude Include="FUnitas\FList.h" />
+    <ClInclude Include="FUnitas\FMacros.h" />
+    <ClInclude Include="FUnitas\FRange.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FList\README.md" />
+    <None Include="FUnitas\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
