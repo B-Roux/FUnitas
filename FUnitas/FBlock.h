@@ -3,19 +3,21 @@
 
 #include "FMacros.h"
 
+FNAMESPACE_BEGIN
+
 template <typename T> struct FBlock {
 	T* block;
 	FBlock<T>* next;
 	FBlock<T>* prev;
-	UINT block_size;
-	UINT start_indx;
+	FUINT block_size;
+	FUINT start_indx;
 
-	FBlock (T* block_, UINT block_size_, UINT start_indx_) {
+	FBlock (T* block_, FUINT block_size_, FUINT start_indx_) {
 		this->block = block_;
 		this->block_size = block_size_;
 		this->start_indx = start_indx_;
-		this->next = NULLP;
-		this->prev = NULLP;
+		this->next = FNULLP;
+		this->prev = FNULLP;
 	}
 
 	~FBlock() {
@@ -25,4 +27,5 @@ template <typename T> struct FBlock {
 	}
 };
 
+FNAMESPACE_END
 #endif

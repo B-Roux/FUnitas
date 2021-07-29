@@ -5,12 +5,14 @@
 #include "FBlock.h"
 #include "FRange.h"
 
+FNAMESPACE_BEGIN
+
 template <typename T> class FList {
 
 private:
 	FBlock<T>* head;
 	FBlock<T>* tail;
-	UINT total_length;
+	FUINT total_length;
 
 public:
 
@@ -27,13 +29,13 @@ public:
 		this->_integrate_array(buffer, 1);
 	}
 
-	T& operator [] (const UINT idx) const {
+	T& operator [] (const FUINT idx) const {
 		//Get a reference to a specific item by index
 		FBlock<T>* read = tail;
 		if ((idx >= this->total_length) || (idx < 0)) {
 			throw std::out_of_range("Index out of Bounds");
 		}
-		while (read != NULLP) {
+		while (read != FNULLP) {
 			if (idx < read->start_indx) {
 				read = read->prev;
 			}
@@ -46,8 +48,8 @@ public:
 
 	FList<T> operator [] (const FRange idx) const { //Returns new allocation
 		//Get the sub-array starting at FRange.start and ending at FRange.end or FList.length()-1
-		UINT start = idx.start;
-		UINT end = (idx.end <= this->total_length) ? idx.end : this->total_length;
+		FUINT start = idx.start;
+		FUINT end = (idx.end <= this->total_length) ? idx.end : this->total_length;
 
 		if ((start >= this->total_length) || (start > end)) {
 			throw std::out_of_range("Index out of Bounds");
@@ -55,13 +57,13 @@ public:
 
 		T* buffer = new T[end - start];
 		FBlock<T>* read = head;
-		UINT j = 0;
-		UINT k = 0;
-		while (read != NULLP) {
+		FUINT j = 0;
+		FUINT k = 0;
+		while (read != FNULLP) {
 			//i: loop through the data block
 			//j: loop through this FList
 			//k: loop through the range
-			for (UINT i = 0; i < read->block_size; i++) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				if ((j >= start) && (j < end)) {
 					buffer[k] = read->block[i];
 					++k;
@@ -80,16 +82,16 @@ public:
 			throw std::out_of_range("Dimensional Mismatch");
 		}
 
-		UINT n_true = 0;
+		FUINT n_true = 0;
 
-		for (UINT i = 0; i < logical.length(); i++) {
+		for (FUINT i = 0; i < logical.length(); i++) {
 			if (logical[i]) {
 				++n_true;
 			}
 		}
 		if (n_true > 0) {
 			T* buffer = new T[n_true];
-			for (UINT i = 0, j = 0; i < logical.length(); i++) {
+			for (FUINT i = 0, j = 0; i < logical.length(); i++) {
 				if (logical[i]) {
 					buffer[j] = this->operator[](i);
 					++j;
@@ -106,16 +108,16 @@ public:
 
 		//release currently held memory
 		FBlock<T>* read = this->head;
-		FBlock<T>* read_next = NULLP;
-		while (read != NULLP) {
+		FBlock<T>* read_next = FNULLP;
+		while (read != FNULLP) {
 			read_next = read->next;
 			delete read;
 			read = read_next;
 		}
 
 		//reset internal state
-		this->head = NULLP;
-		this->tail = NULLP;
+		this->head = FNULLP;
+		this->tail = FNULLP;
 		this->total_length = 0;
 
 		//instantiate from op
@@ -132,9 +134,9 @@ public:
 
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] > op[j];
 				++j;
 			}
@@ -146,9 +148,9 @@ public:
 	FList<bool> operator > (const T& op) const {
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] > op;
 				++j;
 			}
@@ -166,9 +168,9 @@ public:
 
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] < op[j];
 				++j;
 			}
@@ -180,9 +182,9 @@ public:
 	FList<bool> operator < (const T& op) const {
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] < op;
 				++j;
 			}
@@ -200,9 +202,9 @@ public:
 
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] >= op[j];
 				++j;
 			}
@@ -214,9 +216,9 @@ public:
 	FList<bool> operator >= (const T& op) const {
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] >= op;
 				++j;
 			}
@@ -234,9 +236,9 @@ public:
 
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] <= op[j];
 				++j;
 			}
@@ -248,9 +250,9 @@ public:
 	FList<bool> operator <= (const T& op) const {
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] <= op;
 				++j;
 			}
@@ -268,9 +270,9 @@ public:
 
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] == op[j];
 				++j;
 			}
@@ -282,9 +284,9 @@ public:
 	FList<bool> operator == (const T& op) const {
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] == op;
 				++j;
 			}
@@ -302,9 +304,9 @@ public:
 
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] != op[j];
 				++j;
 			}
@@ -316,9 +318,9 @@ public:
 	FList<bool> operator != (const T& op) const {
 		bool* buffer = new bool[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i] != op;
 				++j;
 			}
@@ -329,10 +331,10 @@ public:
 	}
 
 	//MISCILLANEOUS OPERATORS (FRIEND FUNCTIONS)
-#ifdef OSTREAM_OPS
+#ifdef FIOSTREAM
 	friend std::ostream& operator<<(std::ostream& os, FList<T> list) {
 		os << "[";
-		for (UINT i = 0; i < list.length(); i++) {
+		for (FUINT i = 0; i < list.length(); i++) {
 			if (i > 0) {
 				os << ", ";
 			}
@@ -345,16 +347,16 @@ public:
 
 	//ATTRIBUTE GETTERS & SETTERS
 
-	UINT length() const {
+	FUINT length() const {
 		//get the length of the FList
 		return this->total_length;
 	}
 
-	void _integrate_array(T* block, const UINT length) {
+	void _integrate_array(T* block, const FUINT length) {
 		//Take a DA array pointer and use it as a data block WITHOUT NEW ALLOCATION.
 		//When using this function, the caller gives up responsibility of the data allocation
 		//This is an internal function and its functionality must be hidden from the caller
-		if (head == NULLP) {
+		if (head == FNULLP) {
 			this->head = new FBlock<T>(block, length, this->total_length);
 			this->tail = this->head;
 		}
@@ -373,9 +375,9 @@ public:
 		//This is an internal function and its functionality must be hidden from the caller
 		T* buffer = new T[this->total_length];
 		FBlock<T>* read = this->head;
-		UINT j = 0;
-		while (read != NULLP) {
-			for (UINT i = 0; i < read->block_size; i++) {
+		FUINT j = 0;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				buffer[j] = read->block[i];
 				++j;
 			}
@@ -388,12 +390,12 @@ public:
 
 	FList<T>() {
 		//Default constructor
-		this->head = NULLP;
-		this->tail = NULLP;
+		this->head = FNULLP;
+		this->tail = FNULLP;
 		this->total_length = 0;
 	}
 
-	FList<T>(T* block, UINT length) {
+	FList<T>(T* block, FUINT length) {
 		//Parameterized constructor
 		//When using this function, the caller gives up responsibility of the data allocation
 		this->head = new FBlock<T>(block, length, 0);
@@ -411,27 +413,27 @@ public:
 	~FList() {
 		//deconstructor
 		FBlock<T>* read = this->head;
-		FBlock<T>* read_next = NULLP;
-		while (read != NULLP) {
+		FBlock<T>* read_next = FNULLP;
+		while (read != FNULLP) {
 			read_next = read->next;
 			delete read;
 			read = read_next;
 		}
-		this->head = NULLP;
-		this->tail = NULLP;
+		this->head = FNULLP;
+		this->tail = FNULLP;
 		this->total_length = 0;
 	}
 
-#ifdef DEBUG_MODE
+#ifdef FDEBUG
 	void print_structure() const {
 		FBlock<T>* read = head;
 		std::cout << '{';
 		std::cout << this->total_length << ':';
-		while (read != NULLP) {
+		while (read != FNULLP) {
 			std::cout << '[';
 			std::cout << '<' << read->start_indx << ':';
 			std::cout << read->block_size << '>';
-			for (UINT i = 0; i < read->block_size; i++) {
+			for (FUINT i = 0; i < read->block_size; i++) {
 				std::cout << '(' << read->block[i] << ')';
 			}
 			std::cout << ']';
@@ -443,4 +445,5 @@ public:
 
 };
 
+FNAMESPACE_END
 #endif

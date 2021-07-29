@@ -2,24 +2,27 @@
 #define ONCE_FMACROS_H
 
 //symbols
-//#define DEBUG_MODE //enables structure printing
-#define OSTREAM_OPS //enables << operator
+//#define FDEBUG //enables structure printing
+#define FIOSTREAM //enables << operator
 
 //macros
-#define UINT unsigned __int32
-#define NULLP nullptr
+#define FUINT unsigned __int32
+#define FNULLP nullptr
+
+#define FNAMESPACE_BEGIN namespace ftd {
+#define FNAMESPACE_END }
 
 //dependancies - try to keep as minimal as possible
 #include <stdexcept>
 
 //debug dependencies
-#ifdef DEBUG_MODE
+#ifdef FDEBUG
 #include <iostream>
 #endif
 
 //ostream operations dependancies
 //optional to keep actual distribution minimal
-#ifdef OSTREAM_OPS
+#ifdef FIOSTREAM
 #include <iostream>
 #endif
 

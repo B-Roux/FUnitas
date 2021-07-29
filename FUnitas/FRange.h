@@ -3,14 +3,17 @@
 
 #include "FMacros.h"
 
-struct FRange {
-	UINT start;
-	UINT end;
+FNAMESPACE_BEGIN
 
-	FRange(UINT start_, UINT end_) {
-		this->start = start_;
-		this->end = end_;
+struct FRange {
+	FUINT start;
+	FUINT end;
+
+	FRange(FUINT start, FUINT end) {
+		this->start = start;
+		this->end = end;
 	}
 };
 
+FNAMESPACE_END
 #endif
