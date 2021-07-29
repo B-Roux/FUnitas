@@ -12,7 +12,11 @@ int main() {
     x.append(4);
     x.append(5);
 
-    x.append(x);
+    int y = x[2];
 
     std::cout << x << std::endl;
+    std::cout << y << std::endl;
+    y = 70;
+    std::cout << x << std::endl;
+    std::cout << y << std::endl;
 }

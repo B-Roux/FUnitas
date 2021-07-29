@@ -1,5 +1,5 @@
-#ifndef ONCE_FRANGE_H
-#define ONCE_FRANGE_H
+#ifndef ONCE_FUNITAS_MAIN_H
+#define ONCE_FUNITAS_MAIN_H
 
 /*
  * In this file, expose all of the functionality you 
