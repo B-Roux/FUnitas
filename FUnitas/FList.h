@@ -658,6 +658,8 @@ public:
 
 //some quality of life typedefs :-)
 typedef FList<int> FInts;
+typedef FList<float> FFloats;
 typedef FList<double> FDoubles;
+typedef FList<bool> FBools;
 }
 #endif
