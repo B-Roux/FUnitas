@@ -8,11 +8,17 @@ int main() {
     
     //Basically, run bug tests here
     
-    unitas::FInts x = {1, 2, 3, 4, 5};
+    unitas::FInts x = {1, 2, 3};
 
     std::cout << x << std::endl;
 
     unitas::FDoubles y = x.mutate(my_map_fn);
 
+    unitas::FDoubles z = y;
+
+    z[2] = 400;
+
     std::cout << y << std::endl;
+
+    std::cout << z << std::endl;
 }
