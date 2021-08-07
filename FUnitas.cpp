@@ -1,7 +1,7 @@
 #include "FUnitas.h"
 
-int my_map_fn(int x) {
-    return x*2;
+double my_map_fn(int x) {
+    return ((double)x)/2;
 }
 
 int main() {
@@ -12,7 +12,7 @@ int main() {
 
     std::cout << x << std::endl;
 
-    x.map(my_map_fn);
+    unitas::FDoubles y = x.mutate(my_map_fn);
 
-    std::cout << x << std::endl;
+    std::cout << y << std::endl;
 }

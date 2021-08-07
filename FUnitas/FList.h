@@ -57,7 +57,7 @@ public:
     /// Applies mapper(T) to every T in this FList.
     /// </summary>
     /// <returns>void</returns>
-    void map(T(*mapper)(T)) {
+    void map (T(*mapper)(T)) {
         FBlock<T>* read = this->head;
         while (read != FNULLP) {
             for (FUINT i = 0; i < read->block_size; i++) {
@@ -65,6 +65,26 @@ public:
             }
             read = read->next;
         }
+    }
+
+    /// <summary>
+    /// Applies mutor(T) to every T in this FList.
+    /// If you are returning T from mutor as well, use FList.map() instead.
+    /// </summary>
+    /// <returns>FList<S></returns>
+    template <typename S> FList<S> mutate (S(*mutor)(T)) {
+        FBlock<T>* read = this->head;
+        S* buffer = new S[this->total_length];
+        int j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = (*mutor)(read->block[i]);
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<S>(buffer, this->total_length);
     }
 
     /// <summary>

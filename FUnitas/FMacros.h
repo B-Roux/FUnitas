@@ -2,7 +2,7 @@
 #define ONCE_FMACROS_H
 
 //symbols
-//#define FDEBUG //enables structure printing
+#define FDEBUG //enables structure printing
 #define FIOSTREAM //enables stream compatibility
 #define FINIT_LIST //enables nicer initializations
 
