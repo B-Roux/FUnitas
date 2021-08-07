@@ -3,7 +3,7 @@
 
 #include "FMacros.h"
 
-FNAMESPACE_BEGIN
+FNAMESPACE {
 
 struct FRange {
 	FUINT start;
@@ -15,5 +15,5 @@ struct FRange {
 	}
 };
 
-FNAMESPACE_END
+}
 #endif

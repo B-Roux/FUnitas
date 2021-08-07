@@ -3,27 +3,28 @@
 
 //symbols
 //#define FDEBUG //enables structure printing
-#define FIOSTREAM //enables << operator
+#define FIOSTREAM //enables stream compatibility
+#define FINIT_LIST //enables nicer initializations
 
-//macros
+//expressions
 #define FUINT unsigned __int32
 #define FNULLP nullptr
-
-#define FNAMESPACE_BEGIN namespace ftd {
-#define FNAMESPACE_END }
+#define FNAMESPACE namespace unitas
 
 //dependancies - try to keep as minimal as possible
 #include <stdexcept>
 
-//debug dependencies
+//Conditional dependencies
 #ifdef FDEBUG
 #include <iostream>
 #endif
 
-//ostream operations dependancies
-//optional to keep actual distribution minimal
 #ifdef FIOSTREAM
 #include <iostream>
+#endif
+
+#ifdef FINIT_LIST
+#include <initializer_list>
 #endif
 
 #endif

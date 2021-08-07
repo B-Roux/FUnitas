@@ -5,7 +5,7 @@
 #include "FBlock.h"
 #include "FRange.h"
 
-FNAMESPACE_BEGIN
+FNAMESPACE{
 
 template <typename T> class FList {
 
@@ -18,15 +18,39 @@ public:
 
 	//BASIC OPPERATORS
 
-	void append (const FList<T>& op) { //Does not return new allocation
+	void append(const FList<T>& op) { //Does not return new allocation
 		//Add an FList to this one without affecting one being added
 		this->_integrate_array(op._export_array(), op.length());
 	}
-	void append (const T op) { //Does not return new allocation
+	void append(const T op) { //Does not return new allocation
 		//Add a T to this FList without affecting one being added
 		T* buffer = new T[1];
 		buffer[0] = op;
 		this->_integrate_array(buffer, 1);
+	}
+
+#ifdef FINIT_LIST
+	void append (const std::initializer_list<T> values) {
+		//append the new internals
+		T* block = new T[values.size()];
+		FUINT i = 0;
+		for (T item : values) {
+			block[i] = item;
+			++i;
+		}
+
+		this->_integrate_array(block, i);
+	}
+#endif
+
+	void mutate(T(*mutor)(T)) {
+		FBlock<T>* read = this->head;
+		while (read != FNULLP) {
+			for (FUINT i = 0; i < read->block_size; i++) {
+				read->block[i] = (*mutor)(read->block[i]);
+			}
+			read = read->next;
+		}
 	}
 
 	T& operator [] (const FUINT idx) const {
@@ -76,7 +100,7 @@ public:
 		return FList<T>(buffer, end - start);
 	}
 
-	FList<T> operator [] (const FList<bool> &logical) const { //Returns new allocation
+	FList<T> operator [] (const FList<bool>& logical) const { //Returns new allocation
 		// returns all this[i] where logical[i]
 		if (logical.length() != this->total_length) {
 			throw std::out_of_range("Dimensional Mismatch");
@@ -104,7 +128,7 @@ public:
 		}
 	}
 
-	void operator = (const FList<T> &op) {
+	void operator = (const FList<T>& op) {
 
 		//release currently held memory
 		FBlock<T>* read = this->head;
@@ -123,6 +147,34 @@ public:
 		//instantiate from op
 		this->_integrate_array(op._export_array(), op.length());
 	}
+
+#ifdef FINIT_LIST
+	void operator = (const std::initializer_list<T> values) {
+
+		//release currently held memory
+		FBlock<T>* read = this->head;
+		FBlock<T>* read_next = FNULLP;
+		while (read != FNULLP) {
+			read_next = read->next;
+			delete read;
+			read = read_next;
+		}
+
+		//reset internal state
+		this->head = FNULLP;
+		this->tail = FNULLP;
+		this->total_length = 0;
+
+		//set the new internals
+		T* block = new T[values.size()];
+		FUINT i = 0;
+		for (T item : values) {
+			block[i] = item;
+			++i;
+		}
+		this->_integrate_array(block, i);
+	}
+#endif
 
 	//COMPARISON OPERATORS
 
@@ -409,7 +461,23 @@ public:
 		this->tail = this->head;
 		this->total_length = old.length();
 	}
-	
+
+#ifdef FINIT_LIST
+	FList<T>(std::initializer_list<T> values) {
+		//More user-friendly constructor
+		T* block = new T[values.size()];
+		FUINT i = 0;
+		for (T item : values) {
+			block[i] = item;
+			++i;
+		}
+
+		this->head = new FBlock<T>(block, i, 0);
+		this->tail = this->head;
+		this->total_length = i;
+	}
+#endif
+
 	~FList() {
 		//deconstructor
 		FBlock<T>* read = this->head;
@@ -445,5 +513,8 @@ public:
 
 };
 
-FNAMESPACE_END
+//some quality of life typedefs
+typedef FList<int> FInts;
+typedef FList<double> FDoubles;
+}
 #endif

@@ -3,7 +3,7 @@
 
 #include "FMacros.h"
 
-FNAMESPACE_BEGIN
+FNAMESPACE {
 
 template <typename T> struct FBlock {
 	T* block;
@@ -12,7 +12,7 @@ template <typename T> struct FBlock {
 	FUINT block_size;
 	FUINT start_indx;
 
-	FBlock (T* block_, FUINT block_size_, FUINT start_indx_) {
+	FBlock(T* block_, FUINT block_size_, FUINT start_indx_) {
 		this->block = block_;
 		this->block_size = block_size_;
 		this->start_indx = start_indx_;
@@ -27,5 +27,5 @@ template <typename T> struct FBlock {
 	}
 };
 
-FNAMESPACE_END
+}
 #endif
