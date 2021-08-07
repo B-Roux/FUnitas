@@ -1,48 +1,27 @@
 # FList
 
-A dynamically allocated list template that allows for convenient editing, access and implementation. Loosely based on Python lists.
+An list implementation loosely based on Python lists for C++. As such, many "Pythonic" conventions were adopted in this implementation (with some necessary changes).
 
-## General Notes
+## Initializing an FList
 
-* if a name begins with a dash (ex. `_export_array()`) then it is for internal use and not meant to be used by the caller.
-* If a name ends with a dash (ex. `start_`) then it is fine to use, but was named differently for a reason not important to the caller.
+There are two ways to initialize FLists: with assignment and by explicitly calling the constructor. While you *can* use either, using assignment is much neater, clearer, and Pythonic. They do the same thing at the end of the day,
 
-## Getting Started
+* Empty: `FList<int> foo = {};` or `FList<int> foo = FList<int>();`
+* Explicit Value: `FList<int> foo = {1, 2, 3};` or `FList<int> foo = FList<int>({1, 2, 3});`
+* Copy: `FList<int> foo = bar;` or `FList<int> foo = FList<int>(bar);`
 
-How to initialize an FArray:
+## Accessing Values
 
-* Create an empty FList: `auto foo = FList<Bar>()`
-* From a dynamically allocated array: `auto foo = FList<Bar>(my_bar_array, my_bar_array_length)`<sup>1</sup>
-* From an existing FList (deep copy): `auto foo = FList<Bar>(my_bar)`
+* Single Value: `foo[0]`
+* Index Range: `foo[FRange(0, 3)]` (indexes 0 through 2)
+* Logically: `foo[bar]` (where `bar` is an `FList<bool>` of length `foo.length()`)
 
-How to add data to an FList:
+## Modifying Values
 
-* Individual datum: `foo.append(bmy_ar)`<sup>2</sup>
-* From a dynamically allocated array: `foo._integrate_array(my_bar_array, my_bar_array_length)`<sup>1</sup>
-* From an existing FList: `foo.append(my_bar_FList)`
+* Single Values: `foo[0] = 1` this uses default `T` assignment.
+* Remapping: `FList<int> foo = bar.map(my_map_fn)` where `my_map_fn` takes one `T` argument and returns a `T` answer, this function will return a new FList where every item was passed through the mapping function.
+* Mutating: `FList<bool> foo = bar.mutate(my_mut_fn)` - this works like remapping, except `my_mut_fn` can return any datatype (not just `T`). However, if you know you're just going to be returning `T`, use remapping instead as it is more efficient.
 
-How to get data from an FList:
+## Comparing Values
 
-* Individual datum by index: `foo[i]`
-* Range of data by index: `foo[FRange(start_index, end_index)` -- note that an FRange(i,j) refers to indices i, i+1, ..., j-1
-* Logically: `foo[my_bool_FList]` -- will return all foo[i] where my_bool_FList[i] == true
-* As a dynamically allocated array: `foo._export_array()`<sup>3</sup>
-
-Defined operators:
-
-* Basic conditionals (<, >, <=, >=, ==, !=): `foo > bar` -- will return an FList<bool> with true where foo > bar and false where not
-* Basic conditionals with individual operands: `foo > 5` -- will return an FList<bool> with true where foo > 5 and false where not
-* Indexing (subscript): see section above
-* Assignment (=): `foo = bar` -- will delete and free the contents of foo and obtain a deep copy of bar
-* Stream insertion (<<): `std::cout << foo << std::endl` -- will insert foo into the string into the cout stream, in the format "[ firstItem, secondItem, ..., lastItem]"
-  
-Other useful tools:
-  
-* `foo.length()` will return the total length of the list
-* if `DEBUG_MODE` is defined, then `foo.print_structure()` will print a more detailed view of the internal structurem, including data block granularity. This will only work for the top-level FList, nested FLists will print normally.
-
-## Footnotes
-
-1. Meant for internal use. Be aware that the array is not copied, and the FList must become responsible for the allocation. Incorrect use may lead to memory leaks or read access violations.
-2. Adding individual items may slow the performance of subsequent operations. If many individual items need to be added, consider making a temporary FList to store them before appending that FList to the main one. (Appending an FList automatically reallocates it into a contiguous data block for efficiency.)
-3. Meant for internal use. Be aware that the array is newly created, and that the caller must become responsible for the allocation. Incorrect use may lead to memory leaks or read access violations. Use in conjunction with the foo.length() method.
+FLists support all common comparisons (<, >, <=, >=, !=, ==) for both comparing two FLists element-wise, and comparing an FList to a single `T` value. The result of such a comparison is an `FList<bool>` that contains either true or false for each test.
