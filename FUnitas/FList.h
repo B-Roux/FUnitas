@@ -10,510 +10,633 @@ FNAMESPACE{
 template <typename T> class FList {
 
 private:
-	FBlock<T>* head;
-	FBlock<T>* tail;
-	FUINT total_length;
+    FBlock<T>* head;
+    FBlock<T>* tail;
+    FUINT total_length;
 
 public:
 
-	//BASIC OPPERATORS
+    //BASIC OPPERATORS
 
-	void append(const FList<T>& op) { //Does not return new allocation
-		//Add an FList to this one without affecting one being added
-		this->_integrate_array(op._export_array(), op.length());
-	}
-	void append(const T op) { //Does not return new allocation
-		//Add a T to this FList without affecting one being added
-		T* buffer = new T[1];
-		buffer[0] = op;
-		this->_integrate_array(buffer, 1);
-	}
+    /// <summary>
+    /// Appends the contents of op to this FList (op is not affected).
+    /// </summary>
+    /// <returns>void</returns>
+    void append(const FList<T>& op) {
+        this->_integrate_array(op._export_array(), op.length());
+    }
 
-#ifdef FINIT_LIST
-	void append (const std::initializer_list<T> values) {
-		//append the new internals
-		T* block = new T[values.size()];
-		FUINT i = 0;
-		for (T item : values) {
-			block[i] = item;
-			++i;
-		}
-
-		this->_integrate_array(block, i);
-	}
-#endif
-
-	void mutate(T(*mutor)(T)) {
-		FBlock<T>* read = this->head;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				read->block[i] = (*mutor)(read->block[i]);
-			}
-			read = read->next;
-		}
-	}
-
-	T& operator [] (const FUINT idx) const {
-		//Get a reference to a specific item by index
-		FBlock<T>* read = tail;
-		if ((idx >= this->total_length) || (idx < 0)) {
-			throw std::out_of_range("Index out of Bounds");
-		}
-		while (read != FNULLP) {
-			if (idx < read->start_indx) {
-				read = read->prev;
-			}
-			else {
-				return read->block[idx - read->start_indx];
-			}
-		}
-		throw std::out_of_range("Index out of Bounds");
-	}
-
-	FList<T> operator [] (const FRange idx) const { //Returns new allocation
-		//Get the sub-array starting at FRange.start and ending at FRange.end or FList.length()-1
-		FUINT start = idx.start;
-		FUINT end = (idx.end <= this->total_length) ? idx.end : this->total_length;
-
-		if ((start >= this->total_length) || (start > end)) {
-			throw std::out_of_range("Index out of Bounds");
-		}
-
-		T* buffer = new T[end - start];
-		FBlock<T>* read = head;
-		FUINT j = 0;
-		FUINT k = 0;
-		while (read != FNULLP) {
-			//i: loop through the data block
-			//j: loop through this FList
-			//k: loop through the range
-			for (FUINT i = 0; i < read->block_size; i++) {
-				if ((j >= start) && (j < end)) {
-					buffer[k] = read->block[i];
-					++k;
-				}
-				++j;
-			}
-			read = read->next;
-		}
-
-		return FList<T>(buffer, end - start);
-	}
-
-	FList<T> operator [] (const FList<bool>& logical) const { //Returns new allocation
-		// returns all this[i] where logical[i]
-		if (logical.length() != this->total_length) {
-			throw std::out_of_range("Dimensional Mismatch");
-		}
-
-		FUINT n_true = 0;
-
-		for (FUINT i = 0; i < logical.length(); i++) {
-			if (logical[i]) {
-				++n_true;
-			}
-		}
-		if (n_true > 0) {
-			T* buffer = new T[n_true];
-			for (FUINT i = 0, j = 0; i < logical.length(); i++) {
-				if (logical[i]) {
-					buffer[j] = this->operator[](i);
-					++j;
-				}
-			}
-			return FList<T>(buffer, n_true);
-		}
-		else {
-			return FList<T>();
-		}
-	}
-
-	void operator = (const FList<T>& op) {
-
-		//release currently held memory
-		FBlock<T>* read = this->head;
-		FBlock<T>* read_next = FNULLP;
-		while (read != FNULLP) {
-			read_next = read->next;
-			delete read;
-			read = read_next;
-		}
-
-		//reset internal state
-		this->head = FNULLP;
-		this->tail = FNULLP;
-		this->total_length = 0;
-
-		//instantiate from op
-		this->_integrate_array(op._export_array(), op.length());
-	}
+    /// <summary>
+    /// Appends op to this FList (op assignment called).
+    /// </summary>
+    /// <returns>void</returns>
+    void append(const T op) {
+        T* buffer = new T[1];
+        buffer[0] = op;
+        this->_integrate_array(buffer, 1);
+    }
 
 #ifdef FINIT_LIST
-	void operator = (const std::initializer_list<T> values) {
-
-		//release currently held memory
-		FBlock<T>* read = this->head;
-		FBlock<T>* read_next = FNULLP;
-		while (read != FNULLP) {
-			read_next = read->next;
-			delete read;
-			read = read_next;
-		}
-
-		//reset internal state
-		this->head = FNULLP;
-		this->tail = FNULLP;
-		this->total_length = 0;
-
-		//set the new internals
-		T* block = new T[values.size()];
-		FUINT i = 0;
-		for (T item : values) {
-			block[i] = item;
-			++i;
-		}
-		this->_integrate_array(block, i);
-	}
+    /// <summary>
+    /// Appends the initializer list to this FList.
+    /// </summary>
+    /// <returns>void</returns>
+    void append (const std::initializer_list<T> values) {
+        //append the new internals
+        T* block = new T[values.size()];
+        FUINT i = 0;
+        for (T item : values) {
+            block[i] = item;
+            ++i;
+        }
+        this->_integrate_array(block, i);
+    }
 #endif
 
-	//COMPARISON OPERATORS
+    /// <summary>
+    /// Applies mapper(T) to every T in this FList.
+    /// </summary>
+    /// <returns>void</returns>
+    void map(T(*mapper)(T)) {
+        FBlock<T>* read = this->head;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                read->block[i] = (*mapper)(read->block[i]);
+            }
+            read = read->next;
+        }
+    }
 
-	//element-wise greater than
-	FList<bool> operator > (const FList<T>& op) const {
-		if (op.length() != this->total_length) {
-			throw std::out_of_range("Dimensional Mismatch");
-		}
+    /// <summary>
+    /// Index the idx(th) item in this FList.
+    /// Error if out of bounds.
+    /// </summary>
+    /// <returns>A single record T</returns>
+    T& operator [] (const FUINT idx) const {
+        FBlock<T>* read = tail;
+        if ((idx >= this->total_length) || (idx < 0)) {
+            throw std::out_of_range("Index out of Bounds");
+        }
+        while (read != FNULLP) {
+            if (idx < read->start_indx) {
+                read = read->prev;
+            }
+            else {
+                return read->block[idx - read->start_indx];
+            }
+        }
+        throw std::out_of_range("Index out of Bounds");
+    }
 
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] > op[j];
-				++j;
-			}
-			read = read->next;
-		}
+    /// <summary>
+    /// Get the sub-FList starting at idx.start and ending at idx.end-1.
+    /// If idx.end is too large, return to the maximum index.
+    /// Error if idx.start > idx.end-1
+    /// </summary>
+    /// <returns>An FList containing the sub-FList</returns>
+    FList<T> operator [] (const FRange idx) const {
+        FUINT start = idx.start;
+        FUINT end = (idx.end <= this->total_length) ? idx.end : this->total_length;
 
-		return FList<bool>(buffer, this->total_length);
-	}
-	FList<bool> operator > (const T& op) const {
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] > op;
-				++j;
-			}
-			read = read->next;
-		}
+        if ((start >= this->total_length) || (start > end)) {
+            throw std::out_of_range("Index out of Bounds");
+        }
 
-		return FList<bool>(buffer, this->total_length);
-	}
+        T* buffer = new T[end - start];
+        FBlock<T>* read = head;
+        FUINT j = 0;
+        FUINT k = 0;
+        while (read != FNULLP) {
+            //i: loop through the data block
+            //j: loop through this FList
+            //k: loop through the range
+            for (FUINT i = 0; i < read->block_size; i++) {
+                if ((j >= start) && (j < end)) {
+                    buffer[k] = read->block[i];
+                    ++k;
+                }
+                ++j;
+            }
+            read = read->next;
+        }
 
-	//element-wise less than
-	FList<bool> operator < (const FList<T>& op) const {
-		if (op.length() != this->total_length) {
-			throw std::out_of_range("Dimensional Mismatch");
-		}
+        return FList<T>(buffer, end - start);
+    }
 
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] < op[j];
-				++j;
-			}
-			read = read->next;
-		}
+    /// <summary>
+    /// Get every item of this FList where logical is true.
+    /// Error if dimensions don't match.
+    /// </summary>
+    /// <returns>An FList containing the sub-FList</returns>
+    FList<T> operator [] (const FList<bool>& logical) const {
+        if (logical.length() != this->total_length) {
+            throw std::out_of_range("Dimensional Mismatch");
+        }
 
-		return FList<bool>(buffer, this->total_length);
-	}
-	FList<bool> operator < (const T& op) const {
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] < op;
-				++j;
-			}
-			read = read->next;
-		}
+        FUINT n_true = 0;
 
-		return FList<bool>(buffer, this->total_length);
-	}
+        for (FUINT i = 0; i < logical.length(); i++) {
+            if (logical[i]) {
+                ++n_true;
+            }
+        }
+        if (n_true > 0) {
+            T* buffer = new T[n_true];
+            for (FUINT i = 0, j = 0; i < logical.length(); i++) {
+                if (logical[i]) {
+                    buffer[j] = this->operator[](i);
+                    ++j;
+                }
+            }
+            return FList<T>(buffer, n_true);
+        }
+        else {
+            return FList<T>();
+        }
+    }
 
-	//element-wise greater than or equal
-	FList<bool> operator >= (const FList<T>& op) const {
-		if (op.length() != this->total_length) {
-			throw std::out_of_range("Dimensional Mismatch");
-		}
+    /// <summary>
+    /// Deep copy op and assign it to this instance.
+    /// (Deletes any currently held data.)
+    /// </summary>
+    /// <returns>void</returns>
+    void operator = (const FList<T>& op) {
 
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] >= op[j];
-				++j;
-			}
-			read = read->next;
-		}
+        //release currently held memory
+        FBlock<T>* read = this->head;
+        FBlock<T>* read_next = FNULLP;
+        while (read != FNULLP) {
+            read_next = read->next;
+            delete read;
+            read = read_next;
+        }
 
-		return FList<bool>(buffer, this->total_length);
-	}
-	FList<bool> operator >= (const T& op) const {
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] >= op;
-				++j;
-			}
-			read = read->next;
-		}
+        //reset internal state
+        this->head = FNULLP;
+        this->tail = FNULLP;
+        this->total_length = 0;
 
-		return FList<bool>(buffer, this->total_length);
-	}
+        //instantiate from op
+        this->_integrate_array(op._export_array(), op.length());
+    }
 
-	//element-wise less than or equal
-	FList<bool> operator <= (const FList<T>& op) const {
-		if (op.length() != this->total_length) {
-			throw std::out_of_range("Dimensional Mismatch");
-		}
+#ifdef FINIT_LIST
+    /// <summary>
+    /// Assign all values in the initializer list to this instance.
+    /// (Deletes any currently held data.)
+    /// </summary>
+    /// <returns>void</returns>
+    void operator = (const std::initializer_list<T> values) {
 
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] <= op[j];
-				++j;
-			}
-			read = read->next;
-		}
+        //release currently held memory
+        FBlock<T>* read = this->head;
+        FBlock<T>* read_next = FNULLP;
+        while (read != FNULLP) {
+            read_next = read->next;
+            delete read;
+            read = read_next;
+        }
 
-		return FList<bool>(buffer, this->total_length);
-	}
-	FList<bool> operator <= (const T& op) const {
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] <= op;
-				++j;
-			}
-			read = read->next;
-		}
+        //reset internal state
+        this->head = FNULLP;
+        this->tail = FNULLP;
+        this->total_length = 0;
 
-		return FList<bool>(buffer, this->total_length);
-	}
+        //set the new internals
+        T* block = new T[values.size()];
+        FUINT i = 0;
+        for (T item : values) {
+            block[i] = item;
+            ++i;
+        }
+        this->_integrate_array(block, i);
+    }
+#endif
 
-	//element-wise equal
-	FList<bool> operator == (const FList<T>& op) const {
-		if (op.length() != this->total_length) {
-			throw std::out_of_range("Dimensional Mismatch");
-		}
+    //COMPARISON OPERATORS
 
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] == op[j];
-				++j;
-			}
-			read = read->next;
-		}
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this > op</returns>
+    FList<bool> operator > (const FList<T>& op) const {
+        if (op.length() != this->total_length) {
+            throw std::out_of_range("Dimensional Mismatch");
+        }
 
-		return FList<bool>(buffer, this->total_length);
-	}
-	FList<bool> operator == (const T& op) const {
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] == op;
-				++j;
-			}
-			read = read->next;
-		}
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] > op[j];
+                ++j;
+            }
+            read = read->next;
+        }
 
-		return FList<bool>(buffer, this->total_length);
-	}
+        return FList<bool>(buffer, this->total_length);
+    }
 
-	//element-wise not equal
-	FList<bool> operator != (const FList<T>& op) const {
-		if (op.length() != this->total_length) {
-			throw std::out_of_range("Dimensional Mismatch");
-		}
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this[] > op</returns>
+    FList<bool> operator > (const T& op) const {
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] > op;
+                ++j;
+            }
+            read = read->next;
+        }
 
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] != op[j];
-				++j;
-			}
-			read = read->next;
-		}
+        return FList<bool>(buffer, this->total_length);
+    }
 
-		return FList<bool>(buffer, this->total_length);
-	}
-	FList<bool> operator != (const T& op) const {
-		bool* buffer = new bool[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i] != op;
-				++j;
-			}
-			read = read->next;
-		}
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this < op</returns>
+    FList<bool> operator < (const FList<T>& op) const {
+        if (op.length() != this->total_length) {
+            throw std::out_of_range("Dimensional Mismatch");
+        }
 
-		return FList<bool>(buffer, this->total_length);
-	}
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] < op[j];
+                ++j;
+            }
+            read = read->next;
+        }
 
-	//MISCILLANEOUS OPERATORS (FRIEND FUNCTIONS)
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this[] < op</returns>
+    FList<bool> operator < (const T& op) const {
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] < op;
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this >= op</returns>
+    FList<bool> operator >= (const FList<T>& op) const {
+        if (op.length() != this->total_length) {
+            throw std::out_of_range("Dimensional Mismatch");
+        }
+
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] >= op[j];
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this[] >= op</returns>
+    FList<bool> operator >= (const T& op) const {
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] >= op;
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this <= op</returns>
+    FList<bool> operator <= (const FList<T>& op) const {
+        if (op.length() != this->total_length) {
+            throw std::out_of_range("Dimensional Mismatch");
+        }
+
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] <= op[j];
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this[] <= op</returns>
+    FList<bool> operator <= (const T& op) const {
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] <= op;
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this == op</returns>
+    FList<bool> operator == (const FList<T>& op) const {
+        if (op.length() != this->total_length) {
+            throw std::out_of_range("Dimensional Mismatch");
+        }
+
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] == op[j];
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this[] == op</returns>
+    FList<bool> operator == (const T& op) const {
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] == op;
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this != op</returns>
+    FList<bool> operator != (const FList<T>& op) const {
+        if (op.length() != this->total_length) {
+            throw std::out_of_range("Dimensional Mismatch");
+        }
+
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] != op[j];
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+
+    /// <summary>
+    /// Compare op to this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where this[] != op</returns>
+    FList<bool> operator != (const T& op) const {
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i] != op;
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
+    //MISCILLANEOUS OPERATORS (FRIEND FUNCTIONS)
 #ifdef FIOSTREAM
-	friend std::ostream& operator<<(std::ostream& os, FList<T> list) {
-		os << "[";
-		for (FUINT i = 0; i < list.length(); i++) {
-			if (i > 0) {
-				os << ", ";
-			}
-			os << list[i];
-		}
-		os << "]";
-		return os;
-	}
+    /// <summary>
+    /// Add this FList to the OStream.
+    /// </summary>
+    /// <returns>std::ostream&</returns>
+    friend std::ostream& operator<<(std::ostream& os, FList<T> list) {
+        os << "[";
+        for (FUINT i = 0; i < list.length(); i++) {
+            if (i > 0) {
+                os << ", ";
+            }
+            os << list[i];
+        }
+        os << "]";
+        return os;
+    }
 #endif
 
-	//ATTRIBUTE GETTERS & SETTERS
+    //ATTRIBUTE GETTERS & SETTERS
 
-	FUINT length() const {
-		//get the length of the FList
-		return this->total_length;
-	}
+    /// <summary>
+    /// Get the length of the array
+    /// </summary>
+    /// <returns>uint</returns>
+    FUINT length() const {
+        return this->total_length;
+    }
 
-	void _integrate_array(T* block, const FUINT length) {
-		//Take a DA array pointer and use it as a data block WITHOUT NEW ALLOCATION.
-		//When using this function, the caller gives up responsibility of the data allocation
-		//This is an internal function and its functionality must be hidden from the caller
-		if (head == FNULLP) {
-			this->head = new FBlock<T>(block, length, this->total_length);
-			this->tail = this->head;
-		}
-		else {
-			FBlock<T>* tmp = new FBlock<T>(block, length, this->total_length);
-			tmp->prev = this->tail;
-			this->tail->next = tmp;
-			this->tail = tmp;
-		}
-		this->total_length += length;
-	}
+    /// <summary>
+    /// Add the array block as an FBlock to this FList.
+    /// WARNING: The passed array should not be deleted. 
+    /// Do not use this if you don't have a very good reason to.
+    /// </summary>
+    /// <returns>void</returns>
+    void _integrate_array(T* block, const FUINT length) {
+        if (head == FNULLP) {
+            this->head = new FBlock<T>(block, length, this->total_length);
+            this->tail = this->head;
+        }
+        else {
+            FBlock<T>* tmp = new FBlock<T>(block, length, this->total_length);
+            tmp->prev = this->tail;
+            this->tail->next = tmp;
+            this->tail = tmp;
+        }
+        this->total_length += length;
+    }
 
-	T* _export_array() const { //Returns new allocation
-		//Return a pointer to a NEWLY ALLOCATED DA array that contains all elements
-		//When using this function, the caller assumes responsibility of the data allocation
-		//This is an internal function and its functionality must be hidden from the caller
-		T* buffer = new T[this->total_length];
-		FBlock<T>* read = this->head;
-		FUINT j = 0;
-		while (read != FNULLP) {
-			for (FUINT i = 0; i < read->block_size; i++) {
-				buffer[j] = read->block[i];
-				++j;
-			}
-			read = read->next;
-		}
-		return buffer;
-	}
+    /// <summary>
+    /// Allocate and return a pointer to an array containing all records
+    /// in this FList.
+    /// WARNING: The returned array is not deleted automatically. 
+    /// Do not use this if you don't have a very good reason to.
+    /// </summary>
+    /// <returns>T*</returns>
+    T* _export_array() const {
+        T* buffer = new T[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i];
+                ++j;
+            }
+            read = read->next;
+        }
+        return buffer;
+    }
 
-	//CONSTRUCTORS & DECONSTRUCTORS
+    //CONSTRUCTORS & DECONSTRUCTORS
 
-	FList<T>() {
-		//Default constructor
-		this->head = FNULLP;
-		this->tail = FNULLP;
-		this->total_length = 0;
-	}
+    /// <summary>
+    /// Initialize an empty FList.
+    /// </summary>
+    /// <returns>FList<T></returns>
+    FList<T>() {
+        this->head = FNULLP;
+        this->tail = FNULLP;
+        this->total_length = 0;
+    }
 
-	FList<T>(T* block, FUINT length) {
-		//Parameterized constructor
-		//When using this function, the caller gives up responsibility of the data allocation
-		this->head = new FBlock<T>(block, length, 0);
-		this->tail = this->head;
-		this->total_length = length;
-	}
+    /// <summary>
+    /// Create an FList from an array and a length value.
+    /// WARNING: The passed array is to be deleted. 
+    /// Do not use this if you don't have a very good reason to.
+    /// </summary>
+    /// <returns>FList<T></returns>
+    FList<T>(T* block, FUINT length) {
+        this->head = new FBlock<T>(block, length, 0);
+        this->tail = this->head;
+        this->total_length = length;
+    }
 
-	FList<T>(const FList<T>& old) {
-		//deep copy constructor
-		this->head = new FBlock<T>(old._export_array(), old.length(), 0);
-		this->tail = this->head;
-		this->total_length = old.length();
-	}
+    /// <summary>
+    /// Deep copy this FList.
+    /// </summary>
+    /// <returns>FList<T></returns>
+    FList<T>(const FList<T>& old) {
+        this->head = new FBlock<T>(old._export_array(), old.length(), 0);
+        this->tail = this->head;
+        this->total_length = old.length();
+    }
 
 #ifdef FINIT_LIST
-	FList<T>(std::initializer_list<T> values) {
-		//More user-friendly constructor
-		T* block = new T[values.size()];
-		FUINT i = 0;
-		for (T item : values) {
-			block[i] = item;
-			++i;
-		}
+    /// <summary>
+    /// Create an FList from an initializer list.
+    /// </summary>
+    /// <returns>FList<T></returns>
+    FList<T>(std::initializer_list<T> values) {
+        T* block = new T[values.size()];
+        FUINT i = 0;
+        for (T item : values) {
+            block[i] = item;
+            ++i;
+        }
 
-		this->head = new FBlock<T>(block, i, 0);
-		this->tail = this->head;
-		this->total_length = i;
-	}
+        this->head = new FBlock<T>(block, i, 0);
+        this->tail = this->head;
+        this->total_length = i;
+    }
 #endif
 
-	~FList() {
-		//deconstructor
-		FBlock<T>* read = this->head;
-		FBlock<T>* read_next = FNULLP;
-		while (read != FNULLP) {
-			read_next = read->next;
-			delete read;
-			read = read_next;
-		}
-		this->head = FNULLP;
-		this->tail = FNULLP;
-		this->total_length = 0;
-	}
+    /// <summary>
+    /// Deconstruct this FList.
+    /// Do not explicitly use this if you don't have a 
+    /// very good reason to.
+    /// </summary>
+    /// <returns>void</returns>
+    ~FList() {
+        FBlock<T>* read = this->head;
+        FBlock<T>* read_next = FNULLP;
+        while (read != FNULLP) {
+            read_next = read->next;
+            delete read;
+            read = read_next;
+        }
+        this->head = FNULLP;
+        this->tail = FNULLP;
+        this->total_length = 0;
+    }
 
 #ifdef FDEBUG
-	void print_structure() const {
-		FBlock<T>* read = head;
-		std::cout << '{';
-		std::cout << this->total_length << ':';
-		while (read != FNULLP) {
-			std::cout << '[';
-			std::cout << '<' << read->start_indx << ':';
-			std::cout << read->block_size << '>';
-			for (FUINT i = 0; i < read->block_size; i++) {
-				std::cout << '(' << read->block[i] << ')';
-			}
-			std::cout << ']';
-			read = read->next;
-		}
-		std::cout << '}' << std::endl;
-	}
+    /// <summary>
+    /// Display the (hidden) structure of the FList (using std::cout).
+    /// </summary>
+    /// <returns>void</returns>
+    void print_structure() const {
+        FBlock<T>* read = head;
+        std::cout << '{';
+        std::cout << this->total_length << ':';
+        while (read != FNULLP) {
+            std::cout << '[';
+            std::cout << '<' << read->start_indx << ':';
+            std::cout << read->block_size << '>';
+            for (FUINT i = 0; i < read->block_size; i++) {
+                std::cout << '(' << read->block[i] << ')';
+            }
+            std::cout << ']';
+            read = read->next;
+        }
+        std::cout << '}' << std::endl;
+    }
 #endif
 
 };
 
-//some quality of life typedefs
+//some quality of life typedefs :-)
 typedef FList<int> FInts;
 typedef FList<double> FDoubles;
 }

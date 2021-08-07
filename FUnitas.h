@@ -13,10 +13,14 @@
 // Core FUnitas datastructure, must be included first
 #include "FUnitas/FList.h"
 
-//undefine all FMacros (so they don't mess other things up)
+//undefine all FMacros (so they don't mess other things up):
+
+//symbols
 #undef FDEBUG
 #undef FIOSTREAM
 #undef FINIT_LIST
+
+//expressions
 #undef FUINT
 #undef FNULLP
 #undef FNAMESPACE
