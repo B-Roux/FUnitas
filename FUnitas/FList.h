@@ -523,7 +523,7 @@ public:
     /// WARNING: The passed array should not be deleted. 
     /// Do not use this if you don't have a very good reason to.
     /// </summary>
-    /// <returns>void</returns>
+    /// <returns>void</returns> 
     void _integrate_array(T* block, const FUINT length) {
         if (head == FNULLP) {
             this->head = new FBlock<T>(block, length, this->total_length);
