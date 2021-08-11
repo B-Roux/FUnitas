@@ -19,8 +19,8 @@ There are two ways to initialize FLists: with assignment and by explicitly calli
 ## Modifying Values
 
 * Single Values: `foo[0] = 1` this uses default `T` assignment.
-* Remapping: `FList<int> foo = bar.map(my_map_fn)` where `my_map_fn` takes one `T` argument and returns a `T` answer, this function will return a new FList where every item was passed through the mapping function.
-* Mutating: `FList<bool> foo = bar.mutate(my_mut_fn)` - this works like remapping, except `my_mut_fn` can return any datatype (not just `T`). However, if you know you're just going to be returning `T`, use remapping instead as it is more efficient.
+* Remapping: `bar.map(my_map_fn)` where `my_map_fn` takes one `T` argument and returns a `T`, this function will modify each record in-place (guaranteed O(n)).
+* Mutating: `FList<bool> foo = bar.mutate(my_mut_fn)` - this works like remapping, except `my_mut_fn` can return any datatype (not just `T`) and a new FList is returned as opposed to being modified in-place.
 
 ## Comparing Values
 
