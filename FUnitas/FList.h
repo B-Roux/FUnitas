@@ -14,16 +14,67 @@ private:
     FBlock<T>* tail;
     FUINT total_length;
 
+protected:
+
+    /// <summary>
+    /// Add the array block as an FBlock to this FList.
+    /// WARNING: The passed array should not be deleted. 
+    /// Do not use this if you don't have a very good reason to.
+    /// </summary>
+    /// <returns>void</returns>
+    void integrate_array(T* block, const FUINT length) {
+        if (head == FNULLP) {
+            this->head = new FBlock<T>(block, length, this->total_length);
+            this->tail = this->head;
+        }
+        else {
+            FBlock<T>* tmp = new FBlock<T>(block, length, this->total_length);
+            tmp->prev = this->tail;
+            this->tail->next = tmp;
+            this->tail = tmp;
+        }
+        this->total_length += length;
+    }
+
+    /// <summary>
+    /// Allocate and return a pointer to an array containing all records
+    /// in this FList.
+    /// WARNING: The returned array is not deleted automatically. 
+    /// Do not use this if you don't have a very good reason to.
+    /// </summary>
+    /// <returns>T*</returns>
+    T* export_array() const {
+        T* buffer = new T[this->total_length];
+        FBlock<T>* read = this->head;
+        FUINT j = 0;
+        while (read != FNULLP) {
+            for (FUINT i = 0; i < read->block_size; i++) {
+                buffer[j] = read->block[i];
+                ++j;
+            }
+            read = read->next;
+        }
+        return buffer;
+    }
+
 public:
 
     //BASIC OPPERATORS
+
+    /// <summary>
+    /// Get the length of the array
+    /// </summary>
+    /// <returns>uint</returns>
+    FUINT length() const {
+        return this->total_length;
+    }
 
     /// <summary>
     /// Appends the contents of op to this FList (op is not affected).
     /// </summary>
     /// <returns>void</returns>
     void append(const FList<T>& op) {
-        this->_integrate_array(op._export_array(), op.length());
+        this->integrate_array(op.export_array(), op.length());
     }
 
     /// <summary>
@@ -33,7 +84,34 @@ public:
     void append(const T op) {
         T* buffer = new T[1];
         buffer[0] = op;
-        this->_integrate_array(buffer, 1);
+        this->integrate_array(buffer, 1);
+    }
+
+    /// <summary>
+    /// Reallocate this FList so all data is contiguous
+    /// (ensures array accesses with [] return in O(1) time).
+    /// </summary>
+    /// <returns>void</returns>
+    void defragment() {
+        T* buffer = this->export_array();
+        FUINT len = this->length();
+
+        //release currently held memory
+        FBlock<T>* read = this->head;
+        FBlock<T>* read_next = FNULLP;
+        while (read != FNULLP) {
+            read_next = read->next;
+            delete read;
+            read = read_next;
+        }
+
+        //reset internal state
+        this->head = FNULLP;
+        this->tail = FNULLP;
+        this->total_length = 0;
+
+        //instantiate from op
+        this->integrate_array(buffer, len);
     }
 
 #ifdef FINIT_LIST
@@ -49,7 +127,7 @@ public:
             block[i] = item;
             ++i;
         }
-        this->_integrate_array(block, i);
+        this->integrate_array(block, i);
     }
 #endif
 
@@ -197,7 +275,7 @@ public:
         this->total_length = 0;
 
         //instantiate from op
-        this->_integrate_array(op._export_array(), op.length());
+        this->integrate_array(op.export_array(), op.length());
     }
 
 #ifdef FINIT_LIST
@@ -229,7 +307,7 @@ public:
             block[i] = item;
             ++i;
         }
-        this->_integrate_array(block, i);
+        this->integrate_array(block, i);
     }
 #endif
 
@@ -508,57 +586,6 @@ public:
     }
 #endif
 
-    //ATTRIBUTE GETTERS & SETTERS
-
-    /// <summary>
-    /// Get the length of the array
-    /// </summary>
-    /// <returns>uint</returns>
-    FUINT length() const {
-        return this->total_length;
-    }
-
-    /// <summary>
-    /// Add the array block as an FBlock to this FList.
-    /// WARNING: The passed array should not be deleted. 
-    /// Do not use this if you don't have a very good reason to.
-    /// </summary>
-    /// <returns>void</returns> 
-    void _integrate_array(T* block, const FUINT length) {
-        if (head == FNULLP) {
-            this->head = new FBlock<T>(block, length, this->total_length);
-            this->tail = this->head;
-        }
-        else {
-            FBlock<T>* tmp = new FBlock<T>(block, length, this->total_length);
-            tmp->prev = this->tail;
-            this->tail->next = tmp;
-            this->tail = tmp;
-        }
-        this->total_length += length;
-    }
-
-    /// <summary>
-    /// Allocate and return a pointer to an array containing all records
-    /// in this FList.
-    /// WARNING: The returned array is not deleted automatically. 
-    /// Do not use this if you don't have a very good reason to.
-    /// </summary>
-    /// <returns>T*</returns>
-    T* _export_array() const {
-        T* buffer = new T[this->total_length];
-        FBlock<T>* read = this->head;
-        FUINT j = 0;
-        while (read != FNULLP) {
-            for (FUINT i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i];
-                ++j;
-            }
-            read = read->next;
-        }
-        return buffer;
-    }
-
     //CONSTRUCTORS & DECONSTRUCTORS
 
     /// <summary>
@@ -588,7 +615,7 @@ public:
     /// </summary>
     /// <returns>FList<T></returns>
     FList<T>(const FList<T>& old) {
-        this->head = new FBlock<T>(old._export_array(), old.length(), 0);
+        this->head = new FBlock<T>(old.export_array(), old.length(), 0);
         this->tail = this->head;
         this->total_length = old.length();
     }

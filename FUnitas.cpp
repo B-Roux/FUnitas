@@ -1,24 +1,28 @@
 #include "FUnitas.h"
 
-double my_map_fn(int x) {
-    return ((double)x)/2;
+using namespace unitas;
+using namespace std;
+
+int dti(double x) {
+    return (int)x;
 }
 
 int main() {
     
     //Basically, run bug tests here
     
-    unitas::FInts x = {1, 2, 3};
+    FInts x = {1, 2, 3};
 
-    std::cout << x << std::endl;
+    x.append(1);
+    x.append(1);
+    x.append(1);
+    x.append(1);
+    x.append(1);
 
-    unitas::FDoubles y = x.mutate(my_map_fn);
+    x.print_structure();
 
-    unitas::FDoubles z = y;
+    x.defragment();
 
-    z[2] = 400;
+    x.print_structure();
 
-    std::cout << y << std::endl;
-
-    std::cout << z << std::endl;
 }
