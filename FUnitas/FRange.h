@@ -6,14 +6,14 @@
 FNAMESPACE {
 
 struct FRange {
-    FUINT start;
-    FUINT end;
+    fuint start;
+    fuint end;
 
     /// <summary>
     /// Initialize the FRange.
     /// </summary>
     /// <returns>FRange</returns>
-    FRange(FUINT start, FUINT end) {
+    FRange(fuint start, fuint end) {
         this->start = start;
         this->end = end;
     }

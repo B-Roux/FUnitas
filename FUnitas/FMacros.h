@@ -7,9 +7,8 @@
 #define FINIT_LIST //enables nicer initializations
 
 //expressions
-#define FUINT unsigned __int32
-#define FNULLP nullptr
-#define FNAMESPACE namespace unitas
+
+#define FNAMESPACE namespace uni
 
 //dependancies - try to keep as minimal as possible
 #include <stdexcept>
@@ -26,5 +25,10 @@
 #ifdef FINIT_LIST
 #include <initializer_list>
 #endif
+
+//in-namespace definitions
+FNAMESPACE{
+    typedef  unsigned __int32 fuint;
+}
 
 #endif

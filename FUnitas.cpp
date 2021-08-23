@@ -1,6 +1,6 @@
 #include "FUnitas.h"
 
-using namespace unitas;
+using namespace uni;
 using namespace std;
 
 int dti(double x) {
@@ -24,5 +24,9 @@ int main() {
     x.defragment();
 
     x.print_structure();
+
+    FInts y = x[x > 1];
+
+    y.print_structure();
 
 }

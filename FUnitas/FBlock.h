@@ -9,19 +9,19 @@ template <typename T> struct FBlock {
     T* block;
     FBlock<T>* next;
     FBlock<T>* prev;
-    FUINT block_size;
-    FUINT start_indx;
+    fuint block_size;
+    fuint start_indx;
 
     /// <summary>
     /// Initialize the FBlock.
     /// </summary>
     /// <returns>FBlock<T></returns>
-    FBlock(T* block, FUINT block_size, FUINT start_indx) {
+    FBlock(T* block, fuint block_size, fuint start_indx) {
         this->block = block;
         this->block_size = block_size;
         this->start_indx = start_indx;
-        this->next = FNULLP;
-        this->prev = FNULLP;
+        this->next = nullptr;
+        this->prev = nullptr;
     }
 
     /// <summary>
