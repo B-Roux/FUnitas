@@ -142,11 +142,11 @@
     <ClCompile Include="FUnitas.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FUnitas.h" />
-    <ClInclude Include="FUnitas\FBlock.h" />
-    <ClInclude Include="FUnitas\FList.h" />
-    <ClInclude Include="FUnitas\FMacros.h" />
-    <ClInclude Include="FUnitas\FRange.h" />
+    <ClInclude Include="FUnitas.hpp" />
+    <ClInclude Include="FUnitas\FBlock.hpp" />
+    <ClInclude Include="FUnitas\FList.hpp" />
+    <ClInclude Include="FUnitas\FMacros.hpp" />
+    <ClInclude Include="FUnitas\FRange.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

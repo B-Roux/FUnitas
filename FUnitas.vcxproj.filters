@@ -20,19 +20,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FUnitas.h">
+    <ClInclude Include="FUnitas.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FUnitas\FBlock.h">
+    <ClInclude Include="FUnitas\FBlock.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FUnitas\FList.h">
+    <ClInclude Include="FUnitas\FList.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FUnitas\FMacros.h">
+    <ClInclude Include="FUnitas\FMacros.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FUnitas\FRange.h">
+    <ClInclude Include="FUnitas\FRange.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

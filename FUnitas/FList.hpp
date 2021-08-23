@@ -1,9 +1,9 @@
 #ifndef ONCE_FLIST_H
 #define ONCE_FLIST_H
 
-#include "FMacros.h"
-#include "FBlock.h"
-#include "FRange.h"
+#include "FMacros.hpp"
+#include "FBlock.hpp"
+#include "FRange.hpp"
 
 FNAMESPACE{
 
@@ -146,17 +146,19 @@ public:
     }
 
     /// <summary>
-    /// Applies mutor(T) to every T in this FList.
-    /// If you are returning T from mutor as well, use FList.map() instead.
+    /// applies func(T, fuint) to every record T (index fuint) in 
+    /// the FList.
     /// </summary>
     /// <returns>FList<S></returns>
-    template <typename S> FList<S> mutate (S(*mutor)(T)) {
+    template <typename S, lambda>
+    template <typename S, lambda>
+    FList<S> for_each (S(*func)(T, fuint)) {
         FBlock<T>* read = this->head;
         S* buffer = new S[this->total_length];
-        int j = 0;
+        fuint j = 0;
         while (read != nullptr) {
             for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = (*mutor)(read->block[i]);
+                buffer[j] = (*func)(read->block[i], j);
                 ++j;
             }
             read = read->next;
