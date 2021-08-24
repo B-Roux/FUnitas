@@ -150,8 +150,7 @@ public:
     /// the FList.
     /// </summary>
     /// <returns>FList<S></returns>
-    template <typename S, lambda>
-    template <typename S, lambda>
+    template <typename S> 
     FList<S> for_each (S(*func)(T, fuint)) {
         FBlock<T>* read = this->head;
         S* buffer = new S[this->total_length];
