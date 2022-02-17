@@ -1,7 +1,6 @@
 #ifndef ONCE_FUNITAS_MAIN_H
 #define ONCE_FUNITAS_MAIN_H
 
-
 /*
  * In this file, expose all of the functionality you 
  * would want end users to interact with.

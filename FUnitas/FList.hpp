@@ -20,6 +20,7 @@ protected:
     /// Add the array block as an FBlock to this FList.
     /// WARNING: The passed array should not be deleted. 
     /// Do not use this if you don't have a very good reason to.
+    /// Intended for internal use ONLY.
     /// </summary>
     /// <returns>void</returns>
     void integrate_array(T* block, const fuint length) {
@@ -41,6 +42,7 @@ protected:
     /// in this FList.
     /// WARNING: The returned array is not deleted automatically. 
     /// Do not use this if you don't have a very good reason to.
+    /// Intended for internal use ONLY.
     /// </summary>
     /// <returns>T*</returns>
     T* export_array() const {
@@ -62,7 +64,7 @@ public:
     //BASIC OPPERATORS
 
     /// <summary>
-    /// Get the length of the array
+    /// Public getter for array length
     /// </summary>
     /// <returns>uint</returns>
     fuint length() const {
@@ -93,6 +95,8 @@ public:
     /// </summary>
     /// <returns>void</returns>
     void defragment() {
+
+        //allocate contiguous block
         T* buffer = this->export_array();
         fuint len = this->length();
 
@@ -110,7 +114,7 @@ public:
         this->tail = nullptr;
         this->total_length = 0;
 
-        //instantiate from op
+        //reinstantiate
         this->integrate_array(buffer, len);
     }
 
@@ -120,6 +124,7 @@ public:
     /// </summary>
     /// <returns>void</returns>
     void append (const std::initializer_list<T> values) {
+
         //append the new internals
         T* block = new T[values.size()];
         fuint i = 0;

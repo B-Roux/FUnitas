@@ -1,6 +1,8 @@
 #ifndef ONCE_FMACROS_H
 #define ONCE_FMACROS_H
 
+// Think of this as a config file
+
 //symbols
 #define FDEBUG //enables structure printing
 #define FIOSTREAM //enables stream compatibility
@@ -8,7 +10,7 @@
 
 //expressions
 
-#define FNAMESPACE namespace uni
+#define FNAMESPACE namespace funitas
 
 //dependancies - try to keep as minimal as possible
 #include <stdexcept>
@@ -30,5 +32,4 @@
 FNAMESPACE{
     typedef  unsigned __int32 fuint;
 }
-
 #endif
