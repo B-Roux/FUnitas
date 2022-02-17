@@ -10,7 +10,7 @@
  */
 
 // Core FUnitas datastructure, must be included first
-#include "FUnitas/FList.hpp"
+#include "FUnitas/FList/FList.hpp"
 
 //undefine all FMacros (so they don't mess other things up):
 

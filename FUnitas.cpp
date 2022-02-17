@@ -14,7 +14,7 @@ int main() {
     FInts x = {3, 2, 1};
     x.print_structure();
 
-    cout << x[1] << endl;
+    cout << x[FRange(1,100)] << endl;
 
     while (1) {}
 }

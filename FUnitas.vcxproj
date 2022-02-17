@@ -143,10 +143,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FUnitas.hpp" />
-    <ClInclude Include="FUnitas\FBlock.hpp" />
-    <ClInclude Include="FUnitas\FList.hpp" />
+    <ClInclude Include="FUnitas\FList\FBlock.hpp" />
+    <ClInclude Include="FUnitas\FList\FList.hpp" />
+    <ClInclude Include="FUnitas\FList\FRange.hpp" />
     <ClInclude Include="FUnitas\FMacros.hpp" />
-    <ClInclude Include="FUnitas\FRange.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

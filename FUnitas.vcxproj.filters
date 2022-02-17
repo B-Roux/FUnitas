@@ -23,16 +23,16 @@
     <ClInclude Include="FUnitas.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FUnitas\FBlock.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FUnitas\FList.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FUnitas\FMacros.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FUnitas\FRange.hpp">
+    <ClInclude Include="FUnitas\FList\FBlock.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FUnitas\FList\FList.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FUnitas\FList\FRange.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
