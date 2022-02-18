@@ -10,12 +10,25 @@ int main() {
      * being integration tested.
      */
     {
+        //testing the defragmentation function
+
         FInts x = { 3, 2, 1, 5, 4, 3, 2, 1, 0 };
-        FInts y = { 4, 2, 2, 5, 5, 3, 3, 1, 1 };
+        x.print_structure();
 
-        auto z = x<y;
+        x.append(0);
+        x.print_structure();
 
-        z.print_structure();
+        x.defragment();
+        x.print_structure();
+
+        x.append(x);
+        x.print_structure();
+
+        x.defragment();
+        x.print_structure();
+
+        x.defragment();
+        x.print_structure();
     }
 
     while (1) {}

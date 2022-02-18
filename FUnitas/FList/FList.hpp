@@ -13,6 +13,7 @@ private:
     FBlock<T>* head;
     FBlock<T>* tail;
     fuint total_length;
+    bool defragmented;
 
 protected:
 
@@ -78,6 +79,9 @@ public:
     /// <returns>void</returns>
     void append(const FList<T>& op) {
         this->integrate_array(op.export_array(), op.length());
+
+        //set flag
+        this->defragmented = false;
     }
 
     /// <summary>
@@ -88,6 +92,9 @@ public:
         T* buffer = new T[1];
         buffer[0] = op;
         this->integrate_array(buffer, 1);
+
+        //set flag
+        this->defragmented = false;
     }
 
     /// <summary>
@@ -96,6 +103,11 @@ public:
     /// </summary>
     /// <returns>void</returns>
     void defragment() {
+
+        //if already defragged, nothing needs to be done :)
+        if (this->defragmented) {
+            return;
+        }
 
         //allocate contiguous block
         T* buffer = this->export_array();
@@ -117,6 +129,9 @@ public:
 
         //reinstantiate
         this->integrate_array(buffer, len);
+
+        //set flag
+        this->defragmented = true;
     }
 
 #ifdef FINIT_LIST
@@ -134,6 +149,9 @@ public:
             ++i;
         }
         this->integrate_array(block, i);
+
+        //set flag
+        this->defragmented = false;
     }
 #endif
 
@@ -623,6 +641,9 @@ public:
         this->head = nullptr;
         this->tail = nullptr;
         this->total_length = 0;
+
+        //set flag
+        this->defragmented = true;
     }
 
     /// <summary>
@@ -636,6 +657,9 @@ public:
         this->head = new FBlock<T>(block, length, 0);
         this->tail = this->head;
         this->total_length = length;
+
+        //set flag
+        this->defragmented = true;
     }
 
     /// <summary>
@@ -647,6 +671,9 @@ public:
         this->head = new FBlock<T>(old.export_array(), old.length(), 0);
         this->tail = this->head;
         this->total_length = old.length();
+
+        //set flag
+        this->defragmented = true;
     }
 
 #ifdef FINIT_LIST
@@ -666,6 +693,9 @@ public:
         this->head = new FBlock<T>(block, i, 0);
         this->tail = this->head;
         this->total_length = i;
+
+        //set flag
+        this->defragmented = true;
     }
 #endif
 
@@ -687,6 +717,9 @@ public:
         this->head = nullptr;
         this->tail = nullptr;
         this->total_length = 0;
+
+        //set flag
+        this->defragmented = true;
     }
 
 #ifdef FDEBUG
@@ -708,7 +741,14 @@ public:
             std::cout << ']';
             read = read->next;
         }
-        std::cout << '}' << std::endl;
+        std::cout << '}';
+        if (!this->defragmented) {
+            std::cout << 'F';
+        }
+        else {
+            std::cout << "DF";
+        }
+        std::cout << std::endl;
     }
 #endif
 
