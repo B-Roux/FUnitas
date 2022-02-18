@@ -1,5 +1,5 @@
-#ifndef ONCE_FRANGE_H
-#define ONCE_FRANGE_H
+#ifndef ONCE_FRANGE_HPP
+#define ONCE_FRANGE_HPP
 
 #include "../FMacros.hpp"
 

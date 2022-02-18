@@ -1,11 +1,6 @@
 #include "FUnitas.hpp"
 
 using namespace funitas;
-using namespace std;
-
-float convert_to_double(int ab, fuint i) {
-    return ((float)ab) + 0.5f;
-}
 
 int main() {
     
@@ -14,12 +9,14 @@ int main() {
      * all code should be unit-tested prior to 
      * being integration tested.
      */
-    
-    FInts x = {3, 2, 1};
-    x.print_structure();
+    {
+        FInts x = { 3, 2, 1, 5, 4, 3, 2, 1, 0 };
+        FInts y = { 4, 2, 2, 5, 5, 3, 3, 1, 1 };
 
-    FFloats y = x.for_each(convert_to_double);
-    y.print_structure();
+        auto z = x<y;
+
+        z.print_structure();
+    }
 
     while (1) {}
 }

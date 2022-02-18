@@ -1,11 +1,11 @@
-#ifndef ONCE_FLIST_H
-#define ONCE_FLIST_H
+#ifndef ONCE_FLIST_HPP
+#define ONCE_FLIST_HPP
 
 #include "../FMacros.hpp"
 #include "FBlock.hpp"
 #include "FRange.hpp"
 
-FNAMESPACE{
+FNAMESPACE {
 
 template <typename T> class FList {
 
@@ -46,6 +46,9 @@ protected:
     /// </summary>
     /// <returns>T*</returns>
     T* export_array() const {
+
+        std::cout << "# (array export)" << std::endl;
+
         T* buffer = new T[this->total_length];
         FBlock<T>* read = this->head;
         fuint j = 0;
@@ -573,13 +576,32 @@ public:
         return FList<bool>(buffer, this->total_length);
     }
 
+    /// <summary>
+    /// Negate this FList.
+    /// </summary>
+    /// <returns>An FList<bool> where !this[]</returns>
+    FList<bool> operator ! () const {
+        bool* buffer = new bool[this->total_length];
+        FBlock<T>* read = this->head;
+        fuint j = 0;
+        while (read != nullptr) {
+            for (fuint i = 0; i < read->block_size; i++) {
+                buffer[j] = !(read->block[i]);
+                ++j;
+            }
+            read = read->next;
+        }
+
+        return FList<bool>(buffer, this->total_length);
+    }
+
     //MISCILLANEOUS OPERATORS (FRIEND FUNCTIONS)
 #ifdef FIOSTREAM
     /// <summary>
     /// Add this FList to the OStream.
     /// </summary>
     /// <returns>std::ostream&</returns>
-    friend std::ostream& operator<<(std::ostream& os, FList<T> list) {
+    friend std::ostream& operator <<(std::ostream& os, FList<T> list) {
         os << "[";
         for (fuint i = 0; i < list.length(); i++) {
             if (i > 0) {
@@ -599,6 +621,9 @@ public:
     /// </summary>
     /// <returns>FList<T></returns>
     FList<T>() {
+
+        std::cout << "* (empty)" << std::endl; //TODO
+
         this->head = nullptr;
         this->tail = nullptr;
         this->total_length = 0;
@@ -611,6 +636,9 @@ public:
     /// </summary>
     /// <returns>FList<T></returns>
     FList<T>(T* block, fuint length) {
+
+        std::cout << "* (by integration)" << std::endl; //TODO
+
         this->head = new FBlock<T>(block, length, 0);
         this->tail = this->head;
         this->total_length = length;
@@ -621,6 +649,9 @@ public:
     /// </summary>
     /// <returns>FList<T></returns>
     FList<T>(const FList<T>& old) {
+
+        std::cout << "* (by ref)" << std::endl; //TODO
+
         this->head = new FBlock<T>(old.export_array(), old.length(), 0);
         this->tail = this->head;
         this->total_length = old.length();
@@ -632,6 +663,9 @@ public:
     /// </summary>
     /// <returns>FList<T></returns>
     FList<T>(std::initializer_list<T> values) {
+
+        std::cout << "* (init list)" << std::endl; //TODO
+
         T* block = new T[values.size()];
         fuint i = 0;
         for (T item : values) {
@@ -652,6 +686,9 @@ public:
     /// </summary>
     /// <returns>void</returns>
     ~FList() {
+
+        std::cout << "- (destruct)" << std::endl; //TODO
+
         FBlock<T>* read = this->head;
         FBlock<T>* read_next = nullptr;
         while (read != nullptr) {

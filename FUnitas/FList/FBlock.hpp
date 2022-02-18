@@ -1,5 +1,5 @@
-#ifndef ONCE_FBLOCK_H
-#define ONCE_FBLOCK_H
+#ifndef ONCE_FBLOCK_HPP
+#define ONCE_FBLOCK_HPP
 
 #include "../FMacros.hpp"
 
