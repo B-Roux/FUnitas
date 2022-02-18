@@ -47,8 +47,6 @@ protected:
     /// <returns>T*</returns>
     T* export_array() const {
 
-        std::cout << "# (array export)" << std::endl;
-
         T* buffer = new T[this->total_length];
         FBlock<T>* read = this->head;
         fuint j = 0;
@@ -622,8 +620,6 @@ public:
     /// <returns>FList<T></returns>
     FList<T>() {
 
-        std::cout << "* (empty)" << std::endl; //TODO
-
         this->head = nullptr;
         this->tail = nullptr;
         this->total_length = 0;
@@ -637,8 +633,6 @@ public:
     /// <returns>FList<T></returns>
     FList<T>(T* block, fuint length) {
 
-        std::cout << "* (by integration)" << std::endl; //TODO
-
         this->head = new FBlock<T>(block, length, 0);
         this->tail = this->head;
         this->total_length = length;
@@ -649,8 +643,6 @@ public:
     /// </summary>
     /// <returns>FList<T></returns>
     FList<T>(const FList<T>& old) {
-
-        std::cout << "* (by ref)" << std::endl; //TODO
 
         this->head = new FBlock<T>(old.export_array(), old.length(), 0);
         this->tail = this->head;
@@ -663,8 +655,6 @@ public:
     /// </summary>
     /// <returns>FList<T></returns>
     FList<T>(std::initializer_list<T> values) {
-
-        std::cout << "* (init list)" << std::endl; //TODO
 
         T* block = new T[values.size()];
         fuint i = 0;
@@ -686,8 +676,6 @@ public:
     /// </summary>
     /// <returns>void</returns>
     ~FList() {
-
-        std::cout << "- (destruct)" << std::endl; //TODO
 
         FBlock<T>* read = this->head;
         FBlock<T>* read_next = nullptr;
