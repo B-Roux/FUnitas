@@ -32,7 +32,7 @@ New values can be added to an FList with the `foo.append()` function. Appended v
 
 ## Comparing Values
 
-FLists support all common comparisons (<, >, <=, >=, !=, ==) for both comparing two FLists element-wise, and comparing an FList to a single `T` value. The result of such a comparison is an `FList<bool>` that contains either true or false for each test.
+FLists support all common comparisons (<, >, <=, >=, !=, ==, !(u)) for both comparing two FLists element-wise, and comparing an FList to a single `T` value. The result of such a comparison is an `FList<bool>` that contains either true or false for each test.
 
 You can use this in conjunction with logical indexing to write very concise code, ex.
 ```C++
