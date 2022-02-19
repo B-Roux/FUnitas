@@ -22,6 +22,7 @@ protected:
     /// WARNING: The passed array should not be deleted. 
     /// Do not use this if you don't have a very good reason to.
     /// Intended for internal use ONLY.
+    /// Time: O(1)
     /// </summary>
     /// <returns>void</returns>
     void integrate_array(T* block, const fuint length) {
@@ -44,6 +45,7 @@ protected:
     /// WARNING: The returned array is not deleted automatically. 
     /// Do not use this if you don't have a very good reason to.
     /// Intended for internal use ONLY.
+    /// Time: O(n)
     /// </summary>
     /// <returns>T*</returns>
     T* export_array() const {
@@ -67,6 +69,7 @@ public:
 
     /// <summary>
     /// Public getter for array length
+    /// Time: O(1)
     /// </summary>
     /// <returns>uint</returns>
     fuint length() const {
@@ -75,6 +78,7 @@ public:
 
     /// <summary>
     /// Appends the contents of op to this FList (op is not affected).
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     void append(const FList<T>& op) {
@@ -86,6 +90,7 @@ public:
 
     /// <summary>
     /// Appends op to this FList (op assignment called).
+    /// Time: O(1)
     /// </summary>
     /// <returns>void</returns>
     void append(const T op) {
@@ -100,6 +105,7 @@ public:
     /// <summary>
     /// Reallocate this FList so all data is contiguous
     /// (ensures array accesses with [] return in O(1) time).
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     void defragment() {
@@ -137,6 +143,7 @@ public:
 #ifdef FINIT_LIST
     /// <summary>
     /// Appends the initializer list to this FList.
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     void append (const std::initializer_list<T> values) {
@@ -157,6 +164,7 @@ public:
 
     /// <summary>
     /// Applies mapper(T) to every T in this FList.
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     void map (T(*mapper)(T)) {
@@ -172,6 +180,7 @@ public:
     /// <summary>
     /// applies func(T, fuint) to every record T (index fuint) in 
     /// the FList.
+    /// Time: O(n)
     /// </summary>
     /// <returns>FList<S></returns>
     template <typename S> 
@@ -193,6 +202,7 @@ public:
     /// <summary>
     /// Index the idx(th) item in this FList.
     /// Error if out of bounds.
+    /// Time: O(1) if defragmented, at most O(n) otherwise
     /// </summary>
     /// <returns>A single record T</returns>
     T& operator [] (const fuint idx) const {
@@ -215,6 +225,7 @@ public:
     /// Get the sub-FList starting at idx.start and ending at idx.end-1.
     /// If idx.end is too large, return to the maximum index.
     /// Error if idx.start > idx.end-1
+    /// Time: O(n)
     /// </summary>
     /// <returns>An FList containing the sub-FList</returns>
     FList<T> operator [] (const FRange idx) const {
@@ -269,6 +280,7 @@ public:
     /// <summary>
     /// Get every item of this FList where logical is true.
     /// Error if dimensions don't match.
+    /// Time: O(n)
     /// </summary>
     /// <returns>An FList containing the sub-FList</returns>
     FList<T> operator [] (const FList<bool>& logical) const {
@@ -301,6 +313,7 @@ public:
     /// <summary>
     /// Deep copy op and assign it to this instance.
     /// (Deletes any currently held data.)
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     void operator = (const FList<T>& op) {
@@ -327,6 +340,7 @@ public:
     /// <summary>
     /// Assign all values in the initializer list to this instance.
     /// (Deletes any currently held data.)
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     void operator = (const std::initializer_list<T> values) {
@@ -360,8 +374,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList (bool) where this is gt op</returns>
+    /// <returns>An FList where this is gt op</returns>
     FList<bool> operator > (const FList<T>& op) const & {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
@@ -383,8 +398,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this[] > op</returns>
+    /// <returns>An FList where this[] > op</returns>
     FList<bool> operator > (const T& op) const & {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
@@ -402,8 +418,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this < op</returns>
+    /// <returns>An FList where this < op</returns>
     FList<bool> operator < (const FList<T>& op) const & {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
@@ -425,8 +442,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this[] < op</returns>
+    /// <returns>An FList where this[] < op</returns>
     FList<bool> operator < (const T& op) const & {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
@@ -444,8 +462,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this >= op</returns>
+    /// <returns>An FList where this >= op</returns>
     FList<bool> operator >= (const FList<T>& op) const {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
@@ -467,8 +486,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this[] >= op</returns>
+    /// <returns>An FList where this[] >= op</returns>
     FList<bool> operator >= (const T& op) const {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
@@ -486,8 +506,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this <= op</returns>
+    /// <returns>An FList where this <= op</returns>
     FList<bool> operator <= (const FList<T>& op) const {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
@@ -509,8 +530,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this[] <= op</returns>
+    /// <returns>An FList where this[] <= op</returns>
     FList<bool> operator <= (const T& op) const {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
@@ -529,8 +551,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this == op</returns>
+    /// <returns>An FList where this == op</returns>
     FList<bool> operator == (const FList<T>& op) const {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
@@ -552,8 +575,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this[] == op</returns>
+    /// <returns>An FList where this[] == op</returns>
     FList<bool> operator == (const T& op) const {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
@@ -571,8 +595,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this != op</returns>
+    /// <returns>An FList where this != op</returns>
     FList<bool> operator != (const FList<T>& op) const {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
@@ -595,8 +620,9 @@ public:
 
     /// <summary>
     /// Compare op to this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where this[] != op</returns>
+    /// <returns>An FList where this[] != op</returns>
     FList<bool> operator != (const T& op) const {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
@@ -614,8 +640,9 @@ public:
 
     /// <summary>
     /// Negate this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>An FList<bool> where !this[]</returns>
+    /// <returns>An FList where !this[]</returns>
     FList<bool> operator ! () const & {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
@@ -634,7 +661,8 @@ public:
     //MISCILLANEOUS OPERATORS (FRIEND FUNCTIONS)
 #ifdef FIOSTREAM
     /// <summary>
-    /// Add this FList to the OStream.
+    /// Add this FList to a stream (as a string).
+    /// Time: O(n)
     /// </summary>
     /// <returns>std::ostream&</returns>
     friend std::ostream& operator <<(std::ostream& os, FList<T> list) {
@@ -650,12 +678,31 @@ public:
     }
 #endif
 
+    /// <summary>
+    /// Returns true if all items in the FList evaluate to 'true.'
+    /// Time: O(n)
+    /// </summary>
+    /// <returns>bool</returns>
+    operator bool() const & {
+        FBlock<T>* read = this->head;
+        while (read != nullptr) {
+            for (fuint i = 0; i < read->block_size; i++) {
+                if (!read->block[i]) {
+                    return false;
+                }
+            }
+            read = read->next;
+        }
+        return true;
+    }
+
     //CONSTRUCTORS & DECONSTRUCTORS
 
     /// <summary>
     /// Initialize an empty FList.
+    /// Time: O(1)
     /// </summary>
-    /// <returns>FList<T></returns>
+    /// <returns>FList</returns>
     FList<T>() {
 
         this->head = nullptr;
@@ -670,8 +717,9 @@ public:
     /// Create an FList from an array and a length value.
     /// WARNING: The passed array is not to be deleted. 
     /// Do not use this if you don't have a very good reason to.
+    /// Time: O(1)
     /// </summary>
-    /// <returns>FList<T></returns>
+    /// <returns>FList</returns>
     FList<T>(T* block, fuint length) {
 
         this->head = new FBlock<T>(block, length, 0);
@@ -685,8 +733,9 @@ public:
     //TODO: Maybe make this a shallow copy?
     /// <summary>
     /// Deep copy this FList.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>FList<T></returns>
+    /// <returns>FList</returns>
     FList<T>(const FList<T>& old) {
 
         this->head = new FBlock<T>(old.export_array(), old.length(), 0);
@@ -700,8 +749,9 @@ public:
 #ifdef FINIT_LIST
     /// <summary>
     /// Create an FList from an initializer list.
+    /// Time: O(n)
     /// </summary>
-    /// <returns>FList (of T)</returns>
+    /// <returns>FList</returns>
     FList<T>(std::initializer_list<T> values) {
 
         T* block = new T[values.size()];
@@ -724,6 +774,7 @@ public:
     /// Deconstruct this FList.
     /// Do not explicitly use this if you don't have a 
     /// very good reason to.
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     ~FList() {
@@ -746,6 +797,7 @@ public:
 #ifdef FDEBUG
     /// <summary>
     /// Display the (hidden) structure of the FList (using std::cout).
+    /// Time: O(n)
     /// </summary>
     /// <returns>void</returns>
     void print_structure() const {

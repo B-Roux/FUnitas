@@ -1,6 +1,7 @@
 #include "FUnitas.hpp"
 
 using namespace funitas;
+using namespace std;
 
 int main() {
     
@@ -9,15 +10,18 @@ int main() {
      * all code should be unit-tested prior to 
      * being integration tested.
      */
-    {
-        //testing the defragmentation function
 
-        FInts x = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    FInts x = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    FInts y = { 1, 2, 2, 4, 5, 6, 7, 8, 9, 10, 11 };
+    FBools z = y <= x;
 
-        FInts y = { 1, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10 };
+    cout << z << endl;
 
-        FBools z = x < y;
-        z.print_structure();
+    if (z) {
+        cout << "true" << endl;
+    }
+    else {
+        cout << "false" << endl;
     }
 
     while (1) {}
