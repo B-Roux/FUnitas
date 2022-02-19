@@ -31,5 +31,14 @@
 //in-namespace definitions
 FNAMESPACE{
     typedef  unsigned __int32 fuint;
+
+    enum FComps {
+        greater_than,
+        greater_than_equal,
+        less_than,
+        less_than_equal,
+        equal,
+        not_equal
+    };
 }
 #endif

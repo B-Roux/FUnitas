@@ -15,6 +15,29 @@ private:
     fuint total_length;
     bool defragmented;
 
+    /// <summary>
+    /// compare left with right according to the comparison function FComps
+    /// </summary>
+    /// <returns>bool</returns>
+    bool el_compare (const FComps c, const T& left, const T& right) const {
+        switch (c) {
+            case greater_than:
+                return left > right;
+            case greater_than_equal:
+                return left >= right;
+            case less_than:
+                return left < right;
+            case less_than_equal:
+                return left <= right;
+            case equal:
+                return left == right;
+            case not_equal:
+                return left != right;
+            default:
+                throw std::invalid_argument("invalid comparison");
+        }
+    }
+
 protected:
 
     /// <summary>
@@ -31,7 +54,7 @@ protected:
             this->tail = this->head;
         }
         else {
-            FBlock<T>* tmp = 
+            FBlock<T>* tmp =
                 new FBlock<T>(block, length, this->total_length);
 
             tmp->prev = this->tail;
@@ -373,14 +396,14 @@ public:
     }
 #endif
 
-    //COMPARISON OPERATORS
+    //COMPARISON OPERATORS - TODO
 
     /// <summary>
     /// Compare op to this FList.
     /// Time: O(n)
     /// </summary>
-    /// <returns>An FList where this is gt op</returns>
-    FList<bool> operator > (const FList<T>& op) const & {
+    /// <returns>An FList where this [FComps] op is true</returns>
+    FList<bool> compare (const FComps c, const FList<T>& op) const& {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
         }
@@ -390,7 +413,7 @@ public:
         fuint j = 0;
         while (read != nullptr) {
             for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] > op[j];
+                buffer[j] = el_compare(c, read->block[i], op[j]);
                 ++j;
             }
             read = read->next;
@@ -403,256 +426,14 @@ public:
     /// Compare op to this FList.
     /// Time: O(n)
     /// </summary>
-    /// <returns>An FList where this[] > op</returns>
-    FList<bool> operator > (const T& op) const & {
+    /// <returns>An FList where this [FComps] op is true</returns>
+    FList<bool> compare(const FComps c, const T& op) const& {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
         fuint j = 0;
         while (read != nullptr) {
             for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] > op;
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this < op</returns>
-    FList<bool> operator < (const FList<T>& op) const & {
-        if (op.length() != this->total_length) {
-            throw std::out_of_range("Dimensional Mismatch");
-        }
-
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] < op[j];
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this[] < op</returns>
-    FList<bool> operator < (const T& op) const & {
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] < op;
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this >= op</returns>
-    FList<bool> operator >= (const FList<T>& op) const {
-        if (op.length() != this->total_length) {
-            throw std::out_of_range("Dimensional Mismatch");
-        }
-
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] >= op[j];
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this[] >= op</returns>
-    FList<bool> operator >= (const T& op) const {
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] >= op;
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this <= op</returns>
-    FList<bool> operator <= (const FList<T>& op) const {
-        if (op.length() != this->total_length) {
-            throw std::out_of_range("Dimensional Mismatch");
-        }
-
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] <= op[j];
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this[] <= op</returns>
-    FList<bool> operator <= (const T& op) const {
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] <= op;
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this == op</returns>
-    FList<bool> operator == (const FList<T>& op) const {
-        if (op.length() != this->total_length) {
-            throw std::out_of_range("Dimensional Mismatch");
-        }
-
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] == op[j];
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this[] == op</returns>
-    FList<bool> operator == (const T& op) const {
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] == op;
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this != op</returns>
-    FList<bool> operator != (const FList<T>& op) const {
-        if (op.length() != this->total_length) {
-            throw std::out_of_range("Dimensional Mismatch");
-        }
-
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] != op[j];
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-
-    /// <summary>
-    /// Compare op to this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where this[] != op</returns>
-    FList<bool> operator != (const T& op) const {
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = read->block[i] != op;
-                ++j;
-            }
-            read = read->next;
-        }
-
-        return FList<bool>(buffer, this->total_length);
-    }
-
-    /// <summary>
-    /// Negate this FList.
-    /// Time: O(n)
-    /// </summary>
-    /// <returns>An FList where !this[]</returns>
-    FList<bool> operator ! () const & {
-        bool* buffer = new bool[this->total_length];
-        FBlock<T>* read = this->head;
-        fuint j = 0;
-        while (read != nullptr) {
-            for (fuint i = 0; i < read->block_size; i++) {
-                buffer[j] = !(read->block[i]);
+                buffer[j] = el_compare(c, read->block[i], op);
                 ++j;
             }
             read = read->next;

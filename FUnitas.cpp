@@ -13,7 +13,7 @@ int main() {
 
     FInts x = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     FInts y = { 1, 2, 2, 4, 5, 6, 7, 8, 9, 10, 11 };
-    FBools z = y <= x;
+    FBools z = y.compare(less_than_equal, x);
 
     cout << z << endl;
 
@@ -23,6 +23,4 @@ int main() {
     else {
         cout << "false" << endl;
     }
-
-    while (1) {}
 }
