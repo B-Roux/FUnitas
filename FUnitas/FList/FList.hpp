@@ -361,7 +361,7 @@ public:
     /// <summary>
     /// Compare op to this FList.
     /// </summary>
-    /// <returns>An FList<bool> where this > op</returns>
+    /// <returns>An FList (bool) where this is gt op</returns>
     FList<bool> operator > (const FList<T>& op) const {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
@@ -682,6 +682,7 @@ public:
         this->defragmented = true;
     }
 
+    //TODO: Maybe make this a shallow copy?
     /// <summary>
     /// Deep copy this FList.
     /// </summary>
