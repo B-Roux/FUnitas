@@ -694,7 +694,7 @@ public:
             read = read->next;
         }
         return true;
-    }
+    } //TODO: Should this be explicit?
 
     //CONSTRUCTORS & DECONSTRUCTORS
 
@@ -730,7 +730,6 @@ public:
         this->defragmented = true;
     }
 
-    //TODO: Maybe make this a shallow copy?
     /// <summary>
     /// Deep copy this FList.
     /// Time: O(n)
