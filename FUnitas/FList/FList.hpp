@@ -19,7 +19,7 @@ protected:
 
     /// <summary>
     /// Add the array block as an FBlock to this FList.
-    /// WARNING: The passed array should not be deleted. 
+    /// WARNING: The passed array should not be deleted.
     /// Do not use this if you don't have a very good reason to.
     /// Intended for internal use ONLY.
     /// Time: O(1)
@@ -31,7 +31,9 @@ protected:
             this->tail = this->head;
         }
         else {
-            FBlock<T>* tmp = new FBlock<T>(block, length, this->total_length);
+            FBlock<T>* tmp = 
+                new FBlock<T>(block, length, this->total_length);
+
             tmp->prev = this->tail;
             this->tail->next = tmp;
             this->tail = tmp;
@@ -42,7 +44,7 @@ protected:
     /// <summary>
     /// Allocate and return a pointer to an array containing all records
     /// in this FList.
-    /// WARNING: The returned array is not deleted automatically. 
+    /// WARNING: The returned array is not deleted automatically.
     /// Do not use this if you don't have a very good reason to.
     /// Intended for internal use ONLY.
     /// Time: O(n)
@@ -178,12 +180,12 @@ public:
     }
 
     /// <summary>
-    /// applies func(T, fuint) to every record T (index fuint) in 
+    /// applies func(T, fuint) to every record T (index fuint) in
     /// the FList.
     /// Time: O(n)
     /// </summary>
     /// <returns>FList<S></returns>
-    template <typename S> 
+    template <typename S>
     FList<S> for_each (S(*func)(T, fuint)) {
         FBlock<T>* read = this->head;
         S* buffer = new S[this->total_length];
@@ -230,7 +232,8 @@ public:
     /// <returns>An FList containing the sub-FList</returns>
     FList<T> operator [] (const FRange idx) const {
         fuint start = idx.start;
-        fuint end = (idx.end <= this->total_length) ? idx.end : this->total_length;
+        fuint end = (idx.end <= this->total_length)?
+            idx.end : this->total_length;
 
         bool reverse = idx.by < 0;
         fuint by = (fuint)(reverse ? -idx.by : idx.by); //abs of by
@@ -239,7 +242,7 @@ public:
             throw std::out_of_range("Index out of Bounds");
         }
 
-        //The size of the buffer needed (the OBOE were weird, but this "works")
+        //The size of the buffer needed (the OBOE were weird)
         fuint buff_size = (end - start - 1) / by + 1;
 
         T* buffer = new T[buff_size];
@@ -715,7 +718,7 @@ public:
 
     /// <summary>
     /// Create an FList from an array and a length value.
-    /// WARNING: The passed array is not to be deleted. 
+    /// WARNING: The passed array is not to be deleted.
     /// Do not use this if you don't have a very good reason to.
     /// Time: O(1)
     /// </summary>
@@ -771,7 +774,7 @@ public:
 
     /// <summary>
     /// Deconstruct this FList.
-    /// Do not explicitly use this if you don't have a 
+    /// Do not explicitly use this if you don't have a
     /// very good reason to.
     /// Time: O(n)
     /// </summary>

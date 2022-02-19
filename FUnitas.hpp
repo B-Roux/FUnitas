@@ -2,9 +2,9 @@
 #define ONCE_FUNITAS_MAIN_HPP
 
 /*
- * In this file, expose all of the functionality you 
+ * In this file, expose all of the functionality you
  * would want end users to interact with.
- * 
+ *
  * This file is basically an import aggregate so that you
  * only ever have to include this in a project.
  */

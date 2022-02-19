@@ -4,10 +4,10 @@ using namespace funitas;
 using namespace std;
 
 int main() {
-    
+
     /*
-     * This space is for integration tests - 
-     * all code should be unit-tested prior to 
+     * This space is for integration tests -
+     * all code should be unit-tested prior to
      * being integration tested.
      */
 

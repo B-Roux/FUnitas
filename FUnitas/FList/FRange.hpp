@@ -26,8 +26,9 @@ struct FRange {
     /// Initialize the FRange.
     /// </summary>
     /// <returns>FRange</returns>
-    FRange(fuint start, fuint end, int by) { //'by' must be able to accept neg vals
+    FRange(fuint start, fuint end, int by) {
 
+        //'by' must be able to accept neg vals
         //check for 'by 0' error
         if (by == 0) throw std::out_of_range("'by' cannot be 0");
 
