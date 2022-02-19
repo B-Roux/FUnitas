@@ -14,9 +14,10 @@ int main() {
 
         FInts x = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-        x.print_structure();
+        FInts y = { 1, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-        x[FRange(0, 7, 0)].print_structure();
+        FBools z = x < y;
+        z.print_structure();
     }
 
     while (1) {}

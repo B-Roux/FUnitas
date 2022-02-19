@@ -362,7 +362,7 @@ public:
     /// Compare op to this FList.
     /// </summary>
     /// <returns>An FList (bool) where this is gt op</returns>
-    FList<bool> operator > (const FList<T>& op) const {
+    FList<bool> operator > (const FList<T>& op) const & {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
         }
@@ -385,7 +385,7 @@ public:
     /// Compare op to this FList.
     /// </summary>
     /// <returns>An FList<bool> where this[] > op</returns>
-    FList<bool> operator > (const T& op) const {
+    FList<bool> operator > (const T& op) const & {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
         fuint j = 0;
@@ -404,7 +404,7 @@ public:
     /// Compare op to this FList.
     /// </summary>
     /// <returns>An FList<bool> where this < op</returns>
-    FList<bool> operator < (const FList<T>& op) const {
+    FList<bool> operator < (const FList<T>& op) const & {
         if (op.length() != this->total_length) {
             throw std::out_of_range("Dimensional Mismatch");
         }
@@ -427,7 +427,7 @@ public:
     /// Compare op to this FList.
     /// </summary>
     /// <returns>An FList<bool> where this[] < op</returns>
-    FList<bool> operator < (const T& op) const {
+    FList<bool> operator < (const T& op) const & {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
         fuint j = 0;
@@ -616,7 +616,7 @@ public:
     /// Negate this FList.
     /// </summary>
     /// <returns>An FList<bool> where !this[]</returns>
-    FList<bool> operator ! () const {
+    FList<bool> operator ! () const & {
         bool* buffer = new bool[this->total_length];
         FBlock<T>* read = this->head;
         fuint j = 0;
