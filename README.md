@@ -21,21 +21,26 @@ New values can be added to an FList with the `foo.append()` function. Appended v
 ## Accessing Values
 
 * Single Value: `foo[0]`
-* Index Range: `foo[FRange(0, 3)]` (indexes 0 through 2)
+* Index Range: `foo[FRange(0, 100)]` (indexes 0 through 99)
+* Index Range (with 'by'): `foo[FRange(0, 100, 2)]` every second element (make negative to reverse the output) (indexes 0 through 99)
 * Logically: `foo[bar]` (where `bar` is an `FList<bool>` of length `foo.length()`)
 
 ## Modifying Values
 
 * Single Values: `foo[0] = 1` this uses default `T` assignment.
 * Remapping: `bar.map(my_map_fn)` where `my_map_fn` takes one `T` argument and returns a `T`, this function will modify each record in-place (guaranteed O(n)).
-* Mutating: `FList<bool> foo = bar.mutate(my_mut_fn)` - this works like remapping, except `my_mut_fn` can return any datatype (not just `T`) and a new FList is returned as opposed to being modified in-place.
+* Mutating: `FList<bool> foo = bar.for_each(my_mut_fn)` - this works like remapping, except `my_mut_fn` can return any datatype (not just `T`) and a new FList is returned as opposed to being modified in-place.
 
 ## Comparing Values
 
-FLists support all common comparisons (<, >, <=, >=, !=, ==, !(u)) for both comparing two FLists element-wise, and comparing an FList to a single `T` value. The result of such a comparison is an `FList<bool>` that contains either true or false for each test.
+Us the built-in comparison function to generate a new `FList<bool>` containing the element-wise comparisons:
+
+```C++
+auto baz = foo.compare(greater_than, bar)
+```
 
 You can use this in conjunction with logical indexing to write very concise code, ex.
 ```C++
-auto baz = foo[foo>bar];
+auto baz = foo[foo.compare(greater_than, bar)];
 ```
 This snippet assigns all values of `foo` that are greater than `bar` to `baz`.
