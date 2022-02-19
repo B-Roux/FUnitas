@@ -221,29 +221,49 @@ public:
         fuint start = idx.start;
         fuint end = (idx.end <= this->total_length) ? idx.end : this->total_length;
 
+        bool reverse = idx.by < 0;
+        fuint by = (fuint)(reverse ? -idx.by : idx.by); //abs of by
+
         if ((start >= this->total_length) || (start > end)) {
             throw std::out_of_range("Index out of Bounds");
         }
 
-        T* buffer = new T[end - start];
+        //The size of the buffer needed (the OBOE were weird, but this "works")
+        fuint buff_size = (end - start - 1) / by + 1;
+
+        T* buffer = new T[buff_size];
         FBlock<T>* read = head;
         fuint j = 0;
         fuint k = 0;
+        int skipped = 0;
         while (read != nullptr) {
             //i: loop through the data block
             //j: loop through this FList
-            //k: loop through the range
+            //k: loop through the out array
             for (fuint i = 0; i < read->block_size; i++) {
                 if ((j >= start) && (j < end)) {
-                    buffer[k] = read->block[i];
-                    ++k;
+                    if (skipped == 0) {
+                        buffer[k] = read->block[i];
+                        ++k;
+                        skipped = by;
+                    }
+                    --skipped;
                 }
                 ++j;
             }
             read = read->next;
         }
 
-        return FList<T>(buffer, end - start);
+        if (reverse) {
+            for (fuint i = 0; i < buff_size / 2; i++) {
+                fuint j = buff_size - i - 1;
+                T temp = buffer[i];
+                buffer[i] = buffer[j];
+                buffer[j] = temp;
+            }
+        }
+
+        return FList<T>(buffer, buff_size);
     }
 
     /// <summary>

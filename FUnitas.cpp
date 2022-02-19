@@ -12,23 +12,10 @@ int main() {
     {
         //testing the defragmentation function
 
-        FInts x = { 3, 2, 1, 5, 4, 3, 2, 1, 0 };
+        FInts x = { 3 };
         x.print_structure();
 
-        x.append(0);
-        x.print_structure();
-
-        x.defragment();
-        x.print_structure();
-
-        x.append(x);
-        x.print_structure();
-
-        x.defragment();
-        x.print_structure();
-
-        x.defragment();
-        x.print_structure();
+        x[FRange(0, 1000, -50)].print_structure();
     }
 
     while (1) {}
