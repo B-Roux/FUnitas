@@ -235,19 +235,19 @@ public:
         FBlock<T>* read = head;
         fuint j = 0;
         fuint k = 0;
-        int skipped = 0;
+        int to_skip = 0;
         while (read != nullptr) {
             //i: loop through the data block
             //j: loop through this FList
             //k: loop through the out array
             for (fuint i = 0; i < read->block_size; i++) {
                 if ((j >= start) && (j < end)) {
-                    if (skipped == 0) {
+                    if (to_skip == 0) {
                         buffer[k] = read->block[i];
                         ++k;
-                        skipped = by;
+                        to_skip = by;
                     }
-                    --skipped;
+                    --to_skip;
                 }
                 ++j;
             }
@@ -700,7 +700,7 @@ public:
     /// <summary>
     /// Create an FList from an initializer list.
     /// </summary>
-    /// <returns>FList<T></returns>
+    /// <returns>FList (of T)</returns>
     FList<T>(std::initializer_list<T> values) {
 
         T* block = new T[values.size()];
