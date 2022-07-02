@@ -1,3 +1,7 @@
+IMPORTANT NOTE: This project is currently on hold. Maybe not over, but I need to make sure it's actually a design that is worth pursuing. It's also not a project I am currently spending time on. Maybe again some day.
+
+---
+
 # FList
 
 An list implementation loosely based on Python lists for C++. As such, many "Pythonic" conventions were adopted in this implementation (with some necessary changes).
